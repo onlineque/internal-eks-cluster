@@ -17,5 +17,5 @@ data "aws_secretsmanager_secret_version" "ca_crt" {
 resource "aws_acm_certificate" "wildcard_ssl_certificate" {
   certificate_body  = data.aws_secretsmanager_secret_version.wildcard_ssl_crt.secret_string
   private_key       = data.aws_secretsmanager_secret_version.wildcard_ssl_key.secret_string
-  certificate_chain = data.aws_secretsmanager_secret_version.CA_crt.secret_string
+  certificate_chain = data.aws_secretsmanager_secret_version.ca_crt.secret_string
 }
