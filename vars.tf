@@ -57,6 +57,7 @@ variable "managed_node_groups" {
     min_size     = number
     max_size     = number
     desired_size = number
+    disk_size    = number
 
     tags = map(string)
   }))
