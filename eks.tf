@@ -27,21 +27,13 @@ module "eks" {
   cluster_version                = var.cluster_version
   cluster_endpoint_public_access = true
 
-  platform_teams = var.platform_teams
+  platform_teams    = var.platform_teams
+  application_teams = var.application_teams
 
   vpc_id     = var.vpc_id
   private_subnet_ids = local.private_subnets
 
-  managed_node_groups = {
-    initial = {
-      node_group_name = "initial"
-      instance_types  = ["m5.large"]
-
-      min_size     = 2
-      max_size     = 10
-      desired_size = 2
-    }
-  }
+  managed_node_groups = var.managed_node_groups
 
   # Fargate profiles use the cluster primary security group so these are not utilized
   #create_cluster_security_group = false

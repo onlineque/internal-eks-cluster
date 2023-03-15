@@ -49,10 +49,32 @@ variable "tags" {
   description = "EKS cluster Project tags"
 }
 
+variable "managed_node_groups" {
+  type        = map(object({
+    node_group_name = string
+    instance_types = list(string)
+
+    min_size     = number
+    max_size     = number
+    desired_size = number
+
+    tags = map(string)
+  }))
+  default     = {}
+}
+
 variable "platform_teams" {
   type        = map(object({
     users = list(string)
   }))
+}
+
+variable "application_teams" {
+  type        = map(object({
+    users = list(string)
+  }))
+  default     = {}
+  description = "application teams privileges, quotas, etc."
 }
 
 variable "crt_secret" {
