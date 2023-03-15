@@ -34,5 +34,5 @@ resource "aws_route53_resolver_endpoint" "dns_inbound_resolver" {
 }
 
 data "aws_route53_resolver_endpoint" "dns_inbound_resolver" {
-  name = aws_route53_resolver_endpoint.dns_inbound_resolver.name
+  resolver_endpoint_id = aws_route53_resolver_endpoint.dns_inbound_resolver.id
 }
