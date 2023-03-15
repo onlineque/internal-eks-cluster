@@ -133,6 +133,7 @@ module "eks_blueprints_kubernetes_addons" {
 
 
   tags = local.tags
+  depends_on = [module.zones]
 }
 
 # TODO ?
