@@ -1,0 +1,19 @@
+output "further_instructions" {
+  value = <<-EOT
+    Set up the DNS forwarding on AD DNS by creating a forwarder (needs to be done just once after the EKS cluster has been created):
+
+    DNS domain: ${var.cluster_name}.private
+    IP addresses to forward to: ${aws_route53_resolver_endpoint.dns_inbound_resolver}
+
+    DO NOT CHECK to save it in Active Directory and replicate, let the timeout be at 5 seconds, which is default
+    and save the forwarder setup.
+
+    EKS cluster usage instructions (for admins):
+      Open SSO login page
+      Choose appropriate account and role you have granted the admin access to EKS cluster. Click on "Command line or programmatic access".
+      Copy the content of "Option 1: Set AWS environment variables (Short-term credentials)" and paste them into your terminal.
+      Execute:
+        aws eks update-kubeconfig --name ${var.cluster_name} --role-arn arn:aws:iam::${var.aws_account_id}:role/${var.cluster_name}-admin-team-access
+      You are now ready to use kubectl / k9s to talk to your cluster.
+  EOT
+}
