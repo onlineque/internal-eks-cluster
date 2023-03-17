@@ -95,7 +95,7 @@ module "eks_blueprints_kubernetes_addons" {
 
   # Enable Velero
   enable_velero           = true
-  velero_backup_s3_bucket = module.s3s-i-velero.s3_bucket_id
+  velero_backup_s3_bucket = module.s3_bucket_velero.s3_bucket_id
 
   # Enable external-dns
   enable_external_dns            = true
@@ -178,10 +178,10 @@ resource "kubernetes_storage_class_v1" "efs" {
   ]
 }
 
-module "s3s-i-velero" {
+module "s3_bucket_velero" {
   source = "github.com/terraform-aws-modules/terraform-aws-s3-bucket?ref=v3.7.0"
 
-  bucket = "s3s-i-velero"
+  bucket = "s3s-i-velero-${var.cluster_name}"
 
   # S3 bucket-level Public Access Block configuration
   block_public_acls       = true
