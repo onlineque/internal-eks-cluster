@@ -59,7 +59,7 @@ variable "managed_node_groups" {
     desired_size = number
     disk_size    = number
 
-    tags = map(string)
+    additional_tags = map(string)
   }))
   default     = {}
 }
