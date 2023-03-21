@@ -92,3 +92,23 @@ variable "ca_crt_secret" {
   type        = string
   description = "Secret ARN for CA certificate secret, only the part after the last slash"
 }
+
+variable "pod_cpu_limit" {
+  type        = string
+  description = "maximum pod CPU limit"
+}
+
+variable "pod_memory_limit" {
+  type        = string
+  description = "maximum pod RAM limit"
+}
+
+variable "pod_cpu_requests" {
+  type        = string
+  description = "maximum pod CPU requests"
+}
+
+variable "pod_memory_requests" {
+  type        = string
+  description = "maximum pod RAM requests"
+}
