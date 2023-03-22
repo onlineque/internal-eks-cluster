@@ -150,6 +150,14 @@ module "eks_blueprints_kubernetes_addons" {
   external_dns_private_zone      = true
   external_dns_route53_zone_arns = [module.zones.route53_zone_zone_arn["${var.cluster_name}.private"]]
   eks_cluster_domain             = "${var.cluster_name}.private"
+  external_dns_helm_config       = {
+    set_values = [
+      {
+        name  = "policy"
+        value = "sync"
+      }
+    ]
+  }
 
   # Enable Fargate logging
   enable_fargate_fluentbit       = true
