@@ -14,5 +14,5 @@ spec:
     - prometheus
     - velero
   parameters:
-    cpu: {{ .Values.limits.cpu }}
-    memory: {{ .Values.limits.memory }}
+    cpu: "{{ .Values.limits.cpu }}"
+    memory: "{{ .Values.limits.memory }}"
