@@ -88,43 +88,43 @@ module "eks_blueprints_kubernetes_addons" {
   enable_cluster_autoscaler = true
 
   # Enable Prometheus
-  enable_prometheus = true
-  prometheus_helm_config = {
-    set_values = [
-      {
-        name  = "server.ingress.enabled"
-        value = "true"
-      },
-      {
-        name  = "server.ingress.annotations.alb\\.ingress\\.kubernetes\\.io/group\\.name"
-        value = "prometheus"
-      },
-      {
-        name  = "server.ingress.annotations.alb\\.ingress\\.kubernetes\\.io/listen-ports"
-        value = "[{\"HTTP\": 80},{\"HTTPS\": 443}]"
-      },
-      {
-        name  = "server.ingress.annotations.alb\\.ingress\\.kubernetes\\.io/subnets"
-        value = "${var.vpc_subnet1_id}, ${var.vpc_subnet2_id}"
-      },
-      {
-        name  = "server.ingress.annotations.alb\\.ingress\\.kubernetes\\.io/certificate-arn"
-        value = "${aws_acm_certificate.wildcard_ssl_certificate.arn}"
-      },
-      {
-        name  = "server.ingress.annotations.alb\\.ingress\\.kubernetes\\.io/scheme"
-        value = "internal"
-      },
-      {
-        name  = "server.ingress.annotations.alb\\.ingress\\.kubernetes\\.io/ssl-redirect"
-        value = "443"
-      },
-      {
-        name  = "server.ingress.annotations.kubernetes\\.io/ingress\\.class"
-        value = "alb"
-      }
-    ]
-  }
+  #enable_prometheus = true
+  #prometheus_helm_config = {
+  #    set_values = [
+  #      {
+  #        name  = "server.ingress.enabled"
+  #        value = "true"
+  #      },
+  #      {
+  #        name  = "server.ingress.annotations.alb\\.ingress\\.kubernetes\\.io/group\\.name"
+  #        value = "prometheus"
+  #      },
+  #      {
+  #        name  = "server.ingress.annotations.alb\\.ingress\\.kubernetes\\.io/listen-ports"
+  #        value = "[{\"HTTP\": 80},{\"HTTPS\": 443}]"
+  #      },
+  #      {
+  #        name  = "server.ingress.annotations.alb\\.ingress\\.kubernetes\\.io/subnets"
+  #        value = "${var.vpc_subnet1_id}, ${var.vpc_subnet2_id}"
+  #      },
+  #      {
+  #        name  = "server.ingress.annotations.alb\\.ingress\\.kubernetes\\.io/certificate-arn"
+  #        value = "${aws_acm_certificate.wildcard_ssl_certificate.arn}"
+  #      },
+  #      {
+  #        name  = "server.ingress.annotations.alb\\.ingress\\.kubernetes\\.io/scheme"
+  #        value = "internal"
+  #      },
+  #      {
+  #        name  = "server.ingress.annotations.alb\\.ingress\\.kubernetes\\.io/ssl-redirect"
+  #        value = "443"
+  #      },
+  #      {
+  #        name  = "server.ingress.annotations.kubernetes\\.io/ingress\\.class"
+  #        value = "alb"
+  #      }
+  #    ]
+  #  }
 
   # Enable Gatekeeper
   enable_gatekeeper = true
