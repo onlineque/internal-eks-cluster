@@ -90,7 +90,6 @@ module "eks_blueprints_kubernetes_addons" {
   # Enable Prometheus
   enable_prometheus = true
   prometheus_helm_config = {
-    force_update = true
     set_values   = [
       {
          name  = "server.ingress.enabled"
@@ -152,7 +151,7 @@ module "eks_blueprints_kubernetes_addons" {
   external_dns_route53_zone_arns = [module.zones.route53_zone_zone_arn["${var.cluster_name}.private"]]
   eks_cluster_domain             = "${var.cluster_name}.private"
   external_dns_helm_config       = {
-    force_update = true
+    version      = "6.11.2-1"
     set_values   = [
       {
         name  = "policy"
