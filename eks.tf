@@ -146,12 +146,11 @@ module "eks_blueprints_kubernetes_addons" {
   velero_backup_s3_bucket = module.s3_bucket_velero.s3_bucket_id
 
   # Enable external-dns
-  enable_external_dns            = false
+  enable_external_dns            = true
   external_dns_private_zone      = true
   external_dns_route53_zone_arns = [module.zones.route53_zone_zone_arn["${var.cluster_name}.private"]]
   eks_cluster_domain             = "${var.cluster_name}.private"
   external_dns_helm_config       = {
-    version      = "6.11.2"
     set_values   = [
       {
         name  = "policy"
