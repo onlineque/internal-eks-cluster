@@ -19,7 +19,7 @@ locals {
 
 #tfsec:ignore:aws-eks-enable-control-plane-logging
 module "eks" {
-  source = "github.com/aws-ia/terraform-aws-eks-blueprints?ref=v4.25.0"
+  source = "github.com/aws-ia/terraform-aws-eks-blueprints?ref=v4.27.0"
   #source  = "terraform-aws-modules/eks/aws"
   #version = "~> 19.5"
 
