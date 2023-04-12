@@ -13,6 +13,7 @@ spec:
     - external-dns
     - prometheus
     - velero
+    - cattle-system
   parameters:
     cpu: "{{ .Values.limits.cpu }}"
     memory: "{{ .Values.limits.memory }}"
