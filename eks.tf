@@ -88,7 +88,7 @@ module "eks_blueprints_kubernetes_addons" {
   enable_cluster_autoscaler = true
 
   # Enable Prometheus
-  enable_prometheus = true
+  enable_prometheus = false
   prometheus_helm_config = {
     set = [
       {
