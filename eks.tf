@@ -88,7 +88,7 @@ module "eks_blueprints_kubernetes_addons" {
   enable_cluster_autoscaler = true
 
   # Enable Prometheus
-  enable_prometheus = false
+  enable_prometheus = true
   prometheus_helm_config = {
     set = [
       {
@@ -102,10 +102,6 @@ module "eks_blueprints_kubernetes_addons" {
       {
          name  = "server.ingress.annotations.alb\\.ingress\\.kubernetes\\.io/listen-ports"
          value = "[{\"HTTP\": 80},{\"HTTPS\": 443}]"
-      },
-      {
-         name  = "server.ingress.annotations.alb\\.ingress\\.kubernetes\\.io/subnets"
-         value = "${var.vpc_subnet1_id}, ${var.vpc_subnet2_id}"
       },
       {
          name  = "server.ingress.annotations.alb\\.ingress\\.kubernetes\\.io/certificate-arn"
