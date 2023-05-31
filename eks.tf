@@ -101,7 +101,7 @@ module "eks_blueprints_kubernetes_addons" {
       },
       {
          name  = "server.ingress.annotations.alb\\.ingress\\.kubernetes\\.io/listen-ports"
-         value = "[{\"HTTP\": 80},{\"HTTPS\": 443}]"
+         value = "[{\"HTTP\": 80}\,{\"HTTPS\": 443}]"
       },
       {
          name  = "server.ingress.annotations.alb\\.ingress\\.kubernetes\\.io/certificate-arn"
