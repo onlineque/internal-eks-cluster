@@ -137,7 +137,7 @@ module "eks_blueprints_kubernetes_addons" {
   # Enable nginx ingress controller
   enable_ingress_nginx = true
   ingress_nginx_helm_config = {
-    set_values = templatefile("${path.module}/templates/nginx-ingress.yaml.tmpl",
+    values = templatefile("${path.module}/templates/nginx-ingress.yaml.tmpl",
       {
         acm_certificate = aws_acm_certificate.wildcard_ssl_certificate.arn
     })
