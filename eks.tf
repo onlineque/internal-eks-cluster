@@ -131,8 +131,7 @@ module "eks_blueprints_kubernetes_addons" {
            name  = "server.ingress.tls[0].hosts[0]"
            value = "prometheus-${var.cluster_name}.agcintranet.eu"
         }
-     ]
-    }
+     ]}
 
   # Enable nginx ingress controller
   enable_ingress_nginx = true
