@@ -90,14 +90,47 @@ module "eks_blueprints_kubernetes_addons" {
   # Enable Prometheus
   enable_prometheus = true
    prometheus_helm_config = {
-     values = [
-        file("${path.module}/values/prometheus/custom-values.yaml")
-      ]
      set = [
-       {
-       name = "test"
-       value = "vro"
-       }
+        {
+           name  = "server.ingress.enabled"
+           value = "true"
+        },
+        {
+           name  = "server.ingress.annotations.alb\\.ingress\\.kubernetes\\.io/group\\.name"
+           value = "prometheus"
+        },
+        {
+           name  = "server.ingress.annotations.alb\\.ingress\\.kubernetes\\.io/listen-ports"
+           value = "[{\"HTTP\": 80}\\,{\"HTTPS\": 443}]"
+        },
+        {
+           name  = "server.ingress.annotations.alb\\.ingress\\.kubernetes\\.io/certificate-arn"
+           value = "${aws_acm_certificate.wildcard_ssl_certificate.arn}"
+        },
+        {
+           name  = "server.ingress.annotations.alb\\.ingress\\.kubernetes\\.io/scheme"
+           value = "internal"
+        },
+        {
+           name  = "server.ingress.annotations.alb\\.ingress\\.kubernetes\\.io/ssl-redirect"
+           value = "443"
+        },
+        {
+           name  = "server.ingress.annotations.kubernetes\\.io/ingress\\.class"
+           value = "alb"
+        },
+        {
+           name  = "server.ingress.hosts[0]"
+           value = "prometheus.${var.cluster_name}.private"
+        },
+        {
+           name  = "server.ingress.hosts[1]"
+           value = "prometheus-${var.cluster_name}.agcintranet.eu"
+        },
+        {
+           name  = "server.ingress.tls[0].hosts[0]"
+           value = "prometheus-${var.cluster_name}.agcintranet.eu"
+        }
      ]
     }
 
