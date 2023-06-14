@@ -89,7 +89,7 @@ module "eks_blueprints_kubernetes_addons" {
 
   # Enable Prometheus
   enable_prometheus = true
-   prometheus_helm_config = {
+  prometheus_helm_config = {
      set = [
         {
            name  = "server.ingress.enabled"
