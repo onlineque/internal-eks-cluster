@@ -93,10 +93,12 @@ module "eks_blueprints_kubernetes_addons" {
      values = [
         file("${path.module}/values/prometheus/custom-values.yaml")
       ]
-     set = {
+     set = [
+       {
        name = "test"
        value = "vro"
-     }
+       }
+     ]
     }
 
   # Enable Gatekeeper
