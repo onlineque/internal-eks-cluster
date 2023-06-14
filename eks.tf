@@ -90,7 +90,13 @@ module "eks_blueprints_kubernetes_addons" {
   # Enable Prometheus
   enable_prometheus = true
    prometheus_helm_config = {
-      values = [file("${path.module}/values/prometheus.yaml")]
+     values = [
+        file("${path.module}/values/prometheus/custom-values.yaml")
+      ]
+     set {
+       name = "test"
+       value = "vro"
+     }
     }
 
   # Enable Gatekeeper
