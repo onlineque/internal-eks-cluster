@@ -11,6 +11,10 @@ controller:
       if ( $server_port = 80 ) {
         return 308 https://$host$request_uri;
       }
+  resources:
+    limits:
+      cpu: 1000m
+      memory: 2048Mi
 
   service:
     enabled: true
