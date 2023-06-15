@@ -140,7 +140,7 @@ module "eks_blueprints_kubernetes_addons" {
       templatefile("${path.module}/templates/nginx-ingress.yaml.tmpl",
       {
         acm_certificate = aws_acm_certificate.wildcard_ssl_certificate.arn
-      })
+      })]
   }
 
   # Enable Gatekeeper
