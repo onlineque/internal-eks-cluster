@@ -63,7 +63,6 @@ module "eks" {
 # Kubernetes Addons
 ################################################################################
 
-
 module "eks_blueprints_kubernetes_addons" {
   source = "github.com/aws-ia/terraform-aws-eks-blueprints//modules/kubernetes-addons?ref=v4.27.0"
 
@@ -137,10 +136,10 @@ module "eks_blueprints_kubernetes_addons" {
   # Enable nginx ingress controller
   enable_ingress_nginx = true
   ingress_nginx_helm_config = {
-    values = templatefile("${path.module}/templates/nginx-ingress.yaml.tmpl",
+    values = yamldecode(templatefile("${path.module}/templates/nginx-ingress.yaml.tmpl",
       {
         acm_certificate = aws_acm_certificate.wildcard_ssl_certificate.arn
-    })
+    }))
   }
 
   # Enable Gatekeeper
