@@ -14,6 +14,7 @@ spec:
     - prometheus
     - velero
     - cattle-system
+    - ingress-nginx
   parameters:
     cpu: "{{ .Values.requests.cpu }}"
     memory: "{{ .Values.requests.memory }}"
