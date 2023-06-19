@@ -18,3 +18,4 @@ spec:
   parameters:
     cpu: "{{ .Values.requests.cpu }}"
     memory: "{{ .Values.requests.memory }}"
+
