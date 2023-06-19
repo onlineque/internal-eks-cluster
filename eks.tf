@@ -143,7 +143,7 @@ module "eks_blueprints_kubernetes_addons" {
   # Enable nginx ingress controller
   enable_ingress_nginx = true
   ingress_nginx_helm_config = {
-    set_values = [
+    set = [
       {
         name  = "controller.containerPort.http"
         value = "80"
