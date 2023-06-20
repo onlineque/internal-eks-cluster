@@ -225,7 +225,7 @@ module "eks_blueprints_kubernetes_addons" {
         value = "443"
       },
       {
-        name  = "controller.service.internal.annotations.service.beta.kubernetes.io/aws-load-balancer-type"
+        name  = "controller.service.internal.annotations.service\\.beta\\.kubernetes\\.io/aws-load-balancer-type"
         value = "nlb"
       },
       {
