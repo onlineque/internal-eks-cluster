@@ -11,6 +11,13 @@ locals {
   private_subnets_cidr_blocks = [ var.csr1-cidr-block, var.csr2-cidr-block ]
 
   tags = var.tags
+
+  nginx_ingress_server_snippet = <<EOT
+    listen 8000;
+    if ( $server_port = 80 ) {
+      return 308 https://$host$request_uri;
+    }
+  EOT
 }
 
 ################################################################################
@@ -62,7 +69,6 @@ module "eks" {
 ################################################################################
 # Kubernetes Addons
 ################################################################################
-
 
 module "eks_blueprints_kubernetes_addons" {
   source = "github.com/aws-ia/terraform-aws-eks-blueprints//modules/kubernetes-addons?ref=v4.27.0"
@@ -136,10 +142,108 @@ module "eks_blueprints_kubernetes_addons" {
   # Enable nginx ingress controller
   enable_ingress_nginx = true
   ingress_nginx_helm_config = {
-    values = templatefile("${path.module}/templates/nginx-ingress.yaml.tmpl",
+    set = [
       {
-        acm_certificate = aws_acm_certificate.wildcard_ssl_certificate.arn
-    })
+        name  = "controller.containerPort.http"
+        value = "80"
+      },
+      {
+        name  = "controller.containerPort.https"
+        value = "443"
+      },
+      {
+        name  = "controller.containerPort.special"
+        value = "8000"
+      },
+      {
+        name  = "controller.config.ssl-redirect"
+        value = "false"
+      },
+      {
+        name  = "controller.config.server-snippet"
+        value = local.nginx_ingress_server_snippet
+      },
+      {
+        name  = "controller.resources.limits.cpu"
+        value = "1000m"
+      },
+      {
+        name  = "controller.resources.limits.memory"
+        value = "2048Mi"
+      },
+      {
+        name  = "controller.service.enabled"
+        value = "true"
+      },
+      {
+        name  = "controller.service.ports.http"
+        value = "80"
+      },
+      {
+        name  = "controller.service.ports.https"
+        value = "443"
+      },
+      {
+        name  = "controller.service.targetPorts.http"
+        value = "http"
+      },
+      {
+        name  = "controller.service.targetPorts.https"
+        value = "special"
+      },
+      {
+        name  = "controller.service.type"
+        value = "LoadBalancer"
+      },
+      {
+        name  = "controller.service.external.enabled"
+        value = "false"
+      },
+      {
+        name  = "controller.service.internal.enabled"
+        value = "true"
+      },
+      {
+        name  = "controller.service.internal.annotations.service\\.beta\\.kubernetes\\.io/aws-load-balancer-internal"
+        value = "true"
+      },
+      {
+        name  = "controller.service.internal.annotations.service\\.beta\\.kubernetes\\.io/aws-load-balancer-nlb-target-type"
+        value = "ip"
+      },
+      {
+        name  = "controller.service.internal.annotations.service\\.beta\\.kubernetes\\.io/aws-load-balancer-scheme"
+        value = "internal"
+      },
+      {
+        name  = "controller.service.internal.annotations.service\\.beta\\.kubernetes\\.io/aws-load-balancer-ssl-cert"
+        value = aws_acm_certificate.wildcard_ssl_certificate.arn
+      },
+      {
+        name  = "controller.service.internal.annotations.service\\.beta\\.kubernetes\\.io/aws-load-balancer-ssl-ports"
+        value = "443"
+      },
+      {
+        name  = "controller.service.internal.annotations.service\\.beta\\.kubernetes\\.io/aws-load-balancer-type"
+        value = "nlb"
+      },
+      {
+        name  = "controller.service.internal.ports.http"
+        value = "80"
+      },
+      {
+        name  = "controller.service.internal.ports.https"
+        value = "443"
+      },
+      {
+        name  = "controller.service.internal.targetPorts.http"
+        value = "http"
+      },
+      {
+        name  = "controller.service.internal.targetPorts.https"
+        value = "special"
+      }
+    ]
   }
 
   # Enable Gatekeeper
