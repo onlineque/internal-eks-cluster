@@ -15,6 +15,7 @@ spec:
     - velero
     - cattle-system
     - ingress-nginx
+    - airbyte
   parameters:
     cpu: "{{ .Values.requests.cpu }}"
     memory: "{{ .Values.requests.memory }}"
