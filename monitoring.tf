@@ -5,7 +5,7 @@ resource "helm_release" "kube-prometheus-stack" {
   version    = "48.1.0"
   namespace  = "prometheus"
   values = [
-    templatefile("${path.module}/helm/kube-prometheus-stack/templates/values.yaml.tmpl",
+    templatefile("${path.module}/helm/kube-prometheus-stack/template/values.yaml.tmpl",
       {
         prometheus_route53_fqdn  = var.prometheus_route53_fqdn
         prometheus_internal_fqdn = var.prometheus_internal_fqdn
