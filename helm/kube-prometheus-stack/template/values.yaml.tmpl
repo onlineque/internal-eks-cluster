@@ -1,0 +1,23 @@
+alertmanager:
+  enabled: false
+grafana:
+  enabled: false
+prometheus:
+  ingress:
+    enabled: true
+    annotations:
+      alb.ingress.kubernetes.io/group.name: prometheus
+      alb.ingress.kubernetes.io/listen-ports: '[{"HTTP": 80},{"HTTPS": 443}]'
+      alb.ingress.kubernetes.io/scheme: internal
+      alb.ingress.kubernetes.io/ssl-redirect: '443'
+    ingressClassName: alb
+    hosts:
+      - {{ prometheus_route53_fqdn }}
+      - {{ prometheus_internal_fqdn }}
+    paths:
+      - /
+    pathType: ImplementationSpecific
+    tls: []
+      - secretName: prometheus-general-tls
+        hosts:
+          - {{ prometheus_internal_fqdn }}
