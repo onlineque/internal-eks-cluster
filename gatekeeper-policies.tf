@@ -26,7 +26,7 @@ data "template_file" "gatekeeper-constraints" {
 resource "helm_release" "gatekeeper-constraints" {
   name      = "gatekeeper-constraints"
   chart     = "${path.module}/helm/gatekeeper-constraints/chart/"
-  version   = "1.0.4"
+  version   = "1.0.5"
   namespace = "gatekeeper-system"
   values    = [data.template_file.gatekeeper-constraints.rendered]
 
