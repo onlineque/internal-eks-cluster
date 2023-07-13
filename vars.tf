@@ -112,3 +112,14 @@ variable "pod_memory_requests" {
   type        = string
   description = "maximum pod RAM requests"
 }
+
+variable "prometheus_internal_fqdn" {
+  type        = string
+  description = "Prometheus internal LAN FQDN"
+}
+
+variable "prometheus_route53_fqdn" {
+  type        = string
+  description = "Prometheus Route53 FQDN"
+}
+
