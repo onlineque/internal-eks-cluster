@@ -17,7 +17,7 @@ prometheus:
     paths:
       - /
     pathType: ImplementationSpecific
-    tls: []
+    tls:
       - secretName: prometheus-general-tls
         hosts:
           - {{ prometheus_internal_fqdn }}
