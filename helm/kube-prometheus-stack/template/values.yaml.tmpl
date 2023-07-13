@@ -12,12 +12,12 @@ prometheus:
       alb.ingress.kubernetes.io/ssl-redirect: '443'
     ingressClassName: alb
     hosts:
-      - {{ prometheus_route53_fqdn }}
-      - {{ prometheus_internal_fqdn }}
+      - ${prometheus_route53_fqdn}
+      - ${prometheus_internal_fqdn}
     paths:
       - /
     pathType: ImplementationSpecific
     tls:
       - secretName: prometheus-general-tls
         hosts:
-          - {{ prometheus_internal_fqdn }}
+          - ${prometheus_internal_fqdn}
