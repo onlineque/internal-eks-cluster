@@ -10,13 +10,13 @@ prometheus:
       alb.ingress.kubernetes.io/listen-ports: '[{"HTTP": 80},{"HTTPS": 443}]'
       alb.ingress.kubernetes.io/scheme: internal
       alb.ingress.kubernetes.io/ssl-redirect: '443'
-    ingressClassName: alb
+      kubernetes.io/ingress.class: alb
     hosts:
       - ${prometheus_route53_fqdn}
       - ${prometheus_internal_fqdn}
     paths:
       - /
-    pathType: ImplementationSpecific
+    pathType: Prefix
     tls:
       - secretName: prometheus-general-tls
         hosts:
@@ -31,4 +31,3 @@ prometheus-node-exporter:
               operator: NotIn
               values:
                 - fargate
-
