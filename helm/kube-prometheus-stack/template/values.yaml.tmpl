@@ -21,3 +21,14 @@ prometheus:
       - secretName: prometheus-general-tls
         hosts:
           - ${prometheus_internal_fqdn}
+prometheus-node-exporter:
+  affinity:
+    nodeAffinity:
+      requiredDuringSchedulingIgnoredDuringExecution:
+        nodeSelectorTerms:
+          - matchExpressions:
+            - key: eks.amazonaws.com/compute-type
+              operator: NotIn
+              values:
+                - fargate
+
