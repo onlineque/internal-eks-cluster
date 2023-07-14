@@ -3,6 +3,8 @@ alertmanager:
 grafana:
   enabled: false
 prometheus:
+  service:
+    type: NodePort
   ingress:
     enabled: true
     annotations:
@@ -18,9 +20,8 @@ prometheus:
       - /
     pathType: Prefix
     tls:
-      - secretName: prometheus-general-tls
-        hosts:
-          - ${prometheus_internal_fqdn}
+      - hosts:
+        - ${prometheus_internal_fqdn}
 prometheus-node-exporter:
   affinity:
     nodeAffinity:
