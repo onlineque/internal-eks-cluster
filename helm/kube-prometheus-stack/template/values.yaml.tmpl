@@ -22,6 +22,20 @@ prometheus:
     tls:
       - hosts:
         - ${prometheus_internal_fqdn}
+  prometheusSpec:
+    ## If true, a nil or {} value for prometheus.prometheusSpec.serviceMonitorSelector will cause the
+    ## prometheus resource to be created with selectors based on values in the helm deployment,
+    ## which will also match the servicemonitors created => must be false to be able to monitor things
+    ## deployed outside the 'kube-prometheus-stack' release
+    ##
+    serviceMonitorSelectorNilUsesHelmValues: false
+
+    podMonitorSelectorNilUsesHelmValues: false
+
+    ruleSelectorNilUsesHelmValues: false
+
+    probeSelectorNilUsesHelmValues: false
+
 prometheus-node-exporter:
   affinity:
     nodeAffinity:
