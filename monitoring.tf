@@ -1,7 +1,7 @@
 locals {
   monitoring_namespace        = "prometheus"
   loki_bucket                 = var.loki_bucket
-  loki_serviceaccount         = var.loki_serviceaccount
+  loki_serviceaccount         = "${local.monitoring_namespace}:loki-sa"
   loki_gateway_monitoring_url = "http://loki-gateway.${local.monitoring_namespace}.svc.cluster.local"
 }
 
