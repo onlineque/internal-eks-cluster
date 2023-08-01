@@ -123,3 +123,13 @@ variable "prometheus_route53_fqdn" {
   description = "Prometheus Route53 FQDN"
 }
 
+variable "loki_bucket" {
+  type        = string
+  description = "Loki bucket name"
+}
+
+variable "loki_serviceaccount" {
+  type        = string
+  description = "Loki service account"
+}
+
