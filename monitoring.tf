@@ -165,9 +165,11 @@ resource "helm_release" "loki" {
   values = [
     templatefile("${path.module}/templates/loki-values.yaml.tmpl",
       {
-        loki_bucket = local.loki_bucket
-        sa_role_arn = module.loki_s3_irsa.iam_role_arn
-        region      = var.aws_region
+        loki_bucket                = local.loki_bucket
+        sa_role_arn                = module.loki_s3_irsa.iam_role_arn
+        region                     = var.aws_region
+        loki_gateway_route53_fqdn  = var.loki_gateway_route53_fqdn
+        loki_gateway_internal_fqdn = var.loki_gateway_internal_fqdn
     })
   ]
   #won't create resource unless namespace 'monitoring' is created and addons up
