@@ -66,17 +66,18 @@ backend:
   replicas: 2
 
 gateway:
+  service:
+    type: NodePort
   ingress:
     # -- Specifies whether an ingress for the gateway should be created
     enabled: true
-    # -- Ingress Class Name. MAY be required for Kubernetes versions >= 1.18
-    ingressClassName: "alb"
     # -- Annotations for the gateway ingress
     annotations:
       alb.ingress.kubernetes.io/group.name: loki
       alb.ingress.kubernetes.io/listen-ports: '[{"HTTP": 80},{"HTTPS": 443}]'
       alb.ingress.kubernetes.io/scheme: internal
       alb.ingress.kubernetes.io/ssl-redirect: '443'
+      kubernetes.io/ingress.class: alb
     # -- Labels for the gateway ingress
     labels: {}
     # -- Hosts configuration for the gateway ingress
