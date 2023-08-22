@@ -198,7 +198,12 @@ resource "helm_release" "kubernetes_event_exporter" {
   repository = "https://charts.bitnami.com/bitnami"
   chart      = "kubernetes-event-exporter"
   version    = "2.5.3"
-
+  values = [
+    templatefile("${path.module}/templates/kubernetes-event-exporter.yaml.tmpl",
+      {
+        loki_gateway_monitoring_url = local.loki_gateway_monitoring_url
+    })
+  ]
   #won't create resource unless namespace 'monitoring' is created
   depends_on = [kubernetes_namespace.monitoring,time_sleep.wait_for_eks_addons]
 }
