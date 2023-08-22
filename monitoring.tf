@@ -191,3 +191,14 @@ resource "helm_release" "promtail" {
   #won't create resource unless namespace 'monitoring' is created
   depends_on = [kubernetes_namespace.monitoring,time_sleep.wait_for_eks_addons]
 }
+
+resource "helm_release" "kubernetes_event_exporter" {
+  name       = "kubernetes-event-exporter"
+  namespace  = local.monitoring_namespace
+  repository = "https://charts.bitnami.com/bitnami"
+  chart      = "kubernetes-event-exporter"
+  version    = "2.5.3"
+
+  #won't create resource unless namespace 'monitoring' is created
+  depends_on = [kubernetes_namespace.monitoring,time_sleep.wait_for_eks_addons]
+}
