@@ -6,7 +6,7 @@ config:
       - receiver: "loki"
     receivers:
       - name: "loki"
-        webhook:
-          endpoint: "${loki_gateway_monitoring_url}/loki/api/v1/push"
-          headers:
-            User-Agent: kube-event-exporter 1.0
+        loki:
+          streamLabels:
+            source: kube-api
+          url: ${loki_gateway_monitoring_url}/loki/api/v1/push
