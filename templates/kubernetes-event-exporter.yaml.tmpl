@@ -4,9 +4,9 @@ config:
   route:
     - match:
       - receiver: "loki"
-    receivers:
-      - name: "loki"
-        loki:
-          streamLabels:
-            source: kube-api
-          url: ${loki_gateway_monitoring_url}/loki/api/v1/push
+  receivers:
+  - name: "loki"
+    loki:
+      streamLabels:
+        source: kube-api
+      url: ${loki_gateway_monitoring_url}/loki/api/v1/push
