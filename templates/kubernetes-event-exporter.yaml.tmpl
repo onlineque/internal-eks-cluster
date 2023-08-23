@@ -12,7 +12,7 @@ config:
       - name: "dump"
         stdout: {}
       - name: "loki"
-        loki:
-          streamLabels:
-            kube-api: true
-          url: ${loki_gateway_monitoring_url}/loki/api/v1/push
+        webhook:
+          endpoint: "${loki_gateway_monitoring_url}/loki/api/v1/push"
+          headers:
+            User-Agent: kube-event-exporter 1.0
