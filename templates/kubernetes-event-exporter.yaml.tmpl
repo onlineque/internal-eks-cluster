@@ -2,15 +2,9 @@ config:
   logLevel: debug
   logFormat: json
   route:
-    routes:
-      - match:
-        - receiver: "dump"
-        - receiver: "loki"
-      - drop:
-        - namespace: "monitoring"
+    - match:
+      - receiver: "loki"
     receivers:
-      - name: "dump"
-        stdout: {}
       - name: "loki"
         webhook:
           endpoint: "${loki_gateway_monitoring_url}/loki/api/v1/push"
