@@ -7,6 +7,7 @@ controller:
   config:
     ssl-redirect: "false" # we use `special` port to control ssl redirection
     server-snippet: |
+      client_max_body_size 50M;
       listen 8000;
       if ( $server_port = 80 ) {
         return 308 https://$host$request_uri;
