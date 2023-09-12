@@ -70,7 +70,7 @@ module "eks" {
 # Kubernetes Addons
 ################################################################################
 module "eks_blueprints_kubernetes_addons" {
-  source = "github.com/aws-ia/eks-blueprints-addons/terraform-aws-eks-blueprints-addons?ref=v1.7.2"
+  source = "github.com/aws-ia/terraform-aws-eks-blueprints-addons?ref=v1.7.2"
 
   cluster_name      = module.eks.eks_cluster_id
   cluster_endpoint  = module.eks.eks_cluster_endpoint
