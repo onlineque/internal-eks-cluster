@@ -110,107 +110,11 @@ module "eks_blueprints_kubernetes_addons" {
   # Enable nginx ingress controller
   enable_ingress_nginx = true
   ingress_nginx = {
-    set = [
+    values = [
+      templatefile("${path.module}/templates/ingress_nginx-values.yaml.tmpl",
       {
-        name  = "controller.containerPort.http"
-        value = "80"
-      },
-      {
-        name  = "controller.containerPort.https"
-        value = "443"
-      },
-      {
-        name  = "controller.containerPort.special"
-        value = "8000"
-      },
-      {
-        name  = "controller.config.ssl-redirect"
-        value = "false"
-      },
-      {
-        name  = "controller.config.server-snippet"
-        value = local.nginx_ingress_server_snippet
-      },
-      {
-        name  = "controller.resources.limits.cpu"
-        value = "1000m"
-      },
-      {
-        name  = "controller.resources.limits.memory"
-        value = "2048Mi"
-      },
-      {
-        name  = "controller.service.enabled"
-        value = "true"
-      },
-      {
-        name  = "controller.service.ports.http"
-        value = "80"
-      },
-      {
-        name  = "controller.service.ports.https"
-        value = "443"
-      },
-      {
-        name  = "controller.service.targetPorts.http"
-        value = "http"
-      },
-      {
-        name  = "controller.service.targetPorts.https"
-        value = "special"
-      },
-      {
-        name  = "controller.service.type"
-        value = "LoadBalancer"
-      },
-      {
-        name  = "controller.service.external.enabled"
-        value = "false"
-      },
-      {
-        name  = "controller.service.internal.enabled"
-        value = "true"
-      },
-      {
-        name  = "controller.service.internal.annotations.service\\.beta\\.kubernetes\\.io/aws-load-balancer-internal"
-        value = "true"
-      },
-      {
-        name  = "controller.service.internal.annotations.service\\.beta\\.kubernetes\\.io/aws-load-balancer-nlb-target-type"
-        value = "ip"
-      },
-      {
-        name  = "controller.service.internal.annotations.service\\.beta\\.kubernetes\\.io/aws-load-balancer-scheme"
-        value = "internal"
-      },
-      {
-        name  = "controller.service.internal.annotations.service\\.beta\\.kubernetes\\.io/aws-load-balancer-ssl-cert"
-        value = aws_acm_certificate.wildcard_ssl_certificate.arn
-      },
-      {
-        name  = "controller.service.internal.annotations.service\\.beta\\.kubernetes\\.io/aws-load-balancer-ssl-ports"
-        value = "443"
-      },
-      {
-        name  = "controller.service.internal.annotations.service\\.beta\\.kubernetes\\.io/aws-load-balancer-type"
-        value = "nlb"
-      },
-      {
-        name  = "controller.service.internal.ports.http"
-        value = "80"
-      },
-      {
-        name  = "controller.service.internal.ports.https"
-        value = "443"
-      },
-      {
-        name  = "controller.service.internal.targetPorts.http"
-        value = "http"
-      },
-      {
-        name  = "controller.service.internal.targetPorts.https"
-        value = "special"
-      }
+        server_snippet = local.nginx_ingress_server_snippet
+      })
     ]
   }
 
@@ -218,22 +122,22 @@ module "eks_blueprints_kubernetes_addons" {
   enable_gatekeeper = true
 
   # Enable Velero
-  enable_velero           = true
-  velero_backup_s3_bucket = module.s3_bucket_velero.s3_bucket_id
+  # enable_velero           = true
+  # velero_backup_s3_bucket = module.s3_bucket_velero.s3_bucket_id
 
   # Enable external-dns
-  enable_external_dns            = true
-  external_dns_private_zone      = true
-  external_dns_route53_zone_arns = [module.zones.route53_zone_zone_arn["${var.cluster_name}.private"]]
-  eks_cluster_domain             = "${var.cluster_name}.private"
-  external_dns_helm_config       = {
-    set_values   = [
-      {
-        name  = "policy"
-        value = "sync"
-      }
-    ]
-  }
+  #enable_external_dns            = true
+  #external_dns_private_zone      = true
+  #external_dns_route53_zone_arns = [module.zones.route53_zone_zone_arn["${var.cluster_name}.private"]]
+  #eks_cluster_domain             = "${var.cluster_name}.private"
+  #external_dns_helm_config       = {
+  #    set_values   = [
+  #      {
+  #        name  = "policy"
+  #        value = "sync"
+  #      }
+  #    ]
+  #}
 
   # Enable Fargate logging
   enable_fargate_fluentbit       = false
@@ -242,16 +146,12 @@ module "eks_blueprints_kubernetes_addons" {
   #    }
 
   enable_aws_load_balancer_controller = true
-  aws_load_balancer_controller_helm_config = {
-    set_values = [
+  aws_load_balancer_controller = {
+    values = [
+      templatefile("${path.module}/templates/aws_load_balancer_controller_values.yaml.tmpl",
       {
-        name  = "vpcId"
-        value = var.vpc_id
-      },
-      {
-        name  = "podDisruptionBudget.maxUnavailable"
-        value = 1
-      },
+        vpc_id              = var.vpc_id
+      })
     ]
   }
 
