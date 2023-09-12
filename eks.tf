@@ -99,17 +99,17 @@ module "eks_blueprints_kubernetes_addons" {
   enable_metrics_server = true
 
   # Enable EFS CSI driver
-  enable_aws_efs_csi_driver = true
+  # enable_aws_efs_csi_driver = true
 
   # Enable EBS CSI driver
-  enable_amazon_eks_aws_ebs_csi_driver = true
+  # enable_amazon_eks_aws_ebs_csi_driver = true
 
   # Enable Cluster Autoscaler
   enable_cluster_autoscaler = true
 
   # Enable nginx ingress controller
   enable_ingress_nginx = true
-  ingress_nginx_helm_config = {
+  ingress_nginx = {
     set = [
       {
         name  = "controller.containerPort.http"
