@@ -69,18 +69,31 @@ module "eks" {
 ################################################################################
 # Kubernetes Addons
 ################################################################################
-
 module "eks_blueprints_kubernetes_addons" {
-  # source = "github.com/aws-ia/terraform-aws-eks-blueprints//modules/kubernetes-addons?ref=v4.27.0"
-  source = "github.com/aws-ia/terraform-aws-eks-blueprints//modules/kubernetes-addons?ref=v4.32.1"
+  source = "github.com/aws-ia/eks-blueprints-addons/terraform-aws-eks-blueprints-addons?ref=v1.7.2"
 
-  eks_cluster_id       = module.eks.eks_cluster_id
-  eks_cluster_endpoint = module.eks.eks_cluster_endpoint
-  eks_oidc_provider    = module.eks.oidc_provider
-  eks_cluster_version  = module.eks.eks_cluster_version
+  cluster_name      = module.eks.eks_cluster_id
+  cluster_endpoint  = module.eks.eks_cluster_endpoint
+  cluster_version   = module.eks.oidc_provider
+  oidc_provider_arn = module.eks.eks_cluster_version
 
-  # Wait on the `kube-system` profile before provisioning addons
-  data_plane_wait_arn = join(",", [for prof in module.eks.fargate_profiles : prof.eks_fargate_profile_arn])
+  eks_addons = {
+    aws-ebs-csi-driver = {
+      most_recent = true
+    }
+    aws-efs-csi-driver = {
+      most_recent = true
+    }
+    coredns = {
+      most_recent = true
+    }
+    vpc-cni = {
+      most_recent = true
+    }
+    kube-proxy = {
+      most_recent = true
+    }
+  }
 
   # Enable Metrics server
   enable_metrics_server = true
@@ -241,7 +254,6 @@ module "eks_blueprints_kubernetes_addons" {
       },
     ]
   }
-
 
   tags = local.tags
   depends_on = [module.zones]
