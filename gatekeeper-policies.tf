@@ -35,5 +35,5 @@ resource "helm_release" "gatekeeper-constraints" {
 
 resource "time_sleep" "wait_for_eks_addons" {
   create_duration = "120s"
-  depends_on       = [module.eks_blueprints_kubernetes_addons]
+  # depends_on       = [module.eks_blueprints_kubernetes_addons]
 }
