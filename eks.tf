@@ -70,97 +70,97 @@ module "eks" {
 ################################################################################
 # Kubernetes Addons
 ################################################################################
-module "eks_blueprints_kubernetes_addons" {
-  source = "github.com/aws-ia/terraform-aws-eks-blueprints-addons?ref=v1.7.2"
-
-  cluster_name      = module.eks.eks_cluster_id
-  cluster_endpoint  = module.eks.eks_cluster_endpoint
-  cluster_version   = module.eks.oidc_provider
-  oidc_provider_arn = module.eks.eks_cluster_version
-
-  eks_addons = {
-    aws-ebs-csi-driver = {
-      most_recent = true
-    }
-    aws-efs-csi-driver = {
-      most_recent = true
-    }
-    coredns = {
-      most_recent = true
-    }
-    vpc-cni = {
-      most_recent = true
-    }
-    kube-proxy = {
-      most_recent = true
-    }
-  }
-
-  # Enable Metrics server
-  enable_metrics_server = true
-
-  # Enable EFS CSI driver
-  # enable_aws_efs_csi_driver = true
-
-  # Enable EBS CSI driver
-  # enable_amazon_eks_aws_ebs_csi_driver = true
-
-  # Enable Cluster Autoscaler
-  enable_cluster_autoscaler = true
-
-  # Enable nginx ingress controller
-  enable_ingress_nginx = true
-  ingress_nginx = {
-    values = [
-      templatefile("${path.module}/templates/ingress_nginx-values.yaml.tmpl",
-      {
-        server_snippet = local.nginx_ingress_server_snippet
-      })
-    ]
-  }
-
-  # Enable Gatekeeper
-  enable_gatekeeper = true
-
-  # Enable Velero
-  enable_velero = true
-  velero = {
-    s3_backup_location = module.s3_bucket_velero.s3_bucket_id
-  }
-
-  # Enable external-dns
-  #enable_external_dns            = true
-  #external_dns_private_zone      = true
-  #external_dns_route53_zone_arns = [module.zones.route53_zone_zone_arn["${var.cluster_name}.private"]]
-  #eks_cluster_domain             = "${var.cluster_name}.private"
-  #external_dns_helm_config       = {
-  #    set_values   = [
-  #      {
-  #        name  = "policy"
-  #        value = "sync"
-  #      }
-  #    ]
-  #}
-
-  # Enable Fargate logging
-  enable_fargate_fluentbit       = false
-  # fargate_fluentbit_addon_config = {
-  #    flb_log_cw = true
-  #    }
-
-  enable_aws_load_balancer_controller = true
-  aws_load_balancer_controller = {
-    values = [
-      templatefile("${path.module}/templates/aws_load_balancer_controller_values.yaml.tmpl",
-      {
-        vpc_id              = var.vpc_id
-      })
-    ]
-  }
-
-  tags = local.tags
-  depends_on = [module.zones]
-}
+#module "eks_blueprints_kubernetes_addons" {
+#  source = "github.com/aws-ia/terraform-aws-eks-blueprints-addons?ref=v1.7.2"
+#
+#  cluster_name      = module.eks.eks_cluster_id
+#  cluster_endpoint  = module.eks.eks_cluster_endpoint
+#  cluster_version   = module.eks.oidc_provider
+#  oidc_provider_arn = module.eks.eks_cluster_version
+#
+#  eks_addons = {
+#    aws-ebs-csi-driver = {
+#      most_recent = true
+#    }
+#    aws-efs-csi-driver = {
+#      most_recent = true
+#    }
+#    coredns = {
+#      most_recent = true
+#    }
+#    vpc-cni = {
+#      most_recent = true
+#    }
+#    kube-proxy = {
+#      most_recent = true
+#    }
+#  }
+#
+#  # Enable Metrics server
+#  enable_metrics_server = true
+#
+#  # Enable EFS CSI driver
+#  # enable_aws_efs_csi_driver = true
+#
+#  # Enable EBS CSI driver
+#  # enable_amazon_eks_aws_ebs_csi_driver = true
+#
+#  # Enable Cluster Autoscaler
+#  enable_cluster_autoscaler = true
+#
+#  # Enable nginx ingress controller
+#  enable_ingress_nginx = true
+#  ingress_nginx = {
+#    values = [
+#      templatefile("${path.module}/templates/ingress_nginx-values.yaml.tmpl",
+#      {
+#        server_snippet = local.nginx_ingress_server_snippet
+#      })
+#    ]
+#  }
+#
+#  # Enable Gatekeeper
+#  enable_gatekeeper = true
+#
+#  # Enable Velero
+#  enable_velero = true
+#  velero = {
+#    s3_backup_location = module.s3_bucket_velero.s3_bucket_id
+#  }
+#
+#  # Enable external-dns
+#  #enable_external_dns            = true
+#  #external_dns_private_zone      = true
+#  #external_dns_route53_zone_arns = [module.zones.route53_zone_zone_arn["${var.cluster_name}.private"]]
+#  #eks_cluster_domain             = "${var.cluster_name}.private"
+#  #external_dns_helm_config       = {
+#  #    set_values   = [
+#  #      {
+#  #        name  = "policy"
+#  #        value = "sync"
+#  #      }
+#  #    ]
+#  #}
+#
+#  # Enable Fargate logging
+#  enable_fargate_fluentbit       = false
+#  # fargate_fluentbit_addon_config = {
+#  #    flb_log_cw = true
+#  #    }
+#
+#  enable_aws_load_balancer_controller = true
+#  aws_load_balancer_controller = {
+#    values = [
+#      templatefile("${path.module}/templates/aws_load_balancer_controller_values.yaml.tmpl",
+#      {
+#        vpc_id              = var.vpc_id
+#      })
+#    ]
+#  }
+#
+#  tags = local.tags
+#  depends_on = [module.zones]
+#}
 
 module "efs" {
   source  = "terraform-aws-modules/efs/aws"
