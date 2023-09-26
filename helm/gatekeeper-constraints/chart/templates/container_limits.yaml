@@ -15,6 +15,7 @@ spec:
     - velero
     - cattle-system
     - ingress-nginx
+    - zabbix
   parameters:
     cpu: "{{ .Values.limits.cpu }}"
     memory: "{{ .Values.limits.memory }}"

@@ -26,7 +26,7 @@ locals {
 
 #tfsec:ignore:aws-eks-enable-control-plane-logging
 module "eks" {
-  source = "github.com/aws-ia/terraform-aws-eks-blueprints?ref=v4.27.0"
+  source = "github.com/aws-ia/terraform-aws-eks-blueprints?ref=v4.32.1"
   #source  = "terraform-aws-modules/eks/aws"
   #version = "~> 19.5"
 
@@ -71,8 +71,8 @@ module "eks" {
 ################################################################################
 
 module "eks_blueprints_kubernetes_addons" {
-  # source = "github.com/aws-ia/terraform-aws-eks-blueprints//modules/kubernetes-addons?ref=v4.27.0"
   source = "github.com/aws-ia/terraform-aws-eks-blueprints//modules/kubernetes-addons?ref=v4.32.1"
+  # source = "github.com/aws-ia/terraform-aws-eks-blueprints-addons?ref=v1.9.1"
 
   eks_cluster_id       = module.eks.eks_cluster_id
   eks_cluster_endpoint = module.eks.eks_cluster_endpoint

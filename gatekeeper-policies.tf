@@ -26,7 +26,7 @@ data "template_file" "gatekeeper-constraints" {
 resource "helm_release" "gatekeeper-constraints" {
   name      = "gatekeeper-constraints"
   chart     = "${path.module}/helm/gatekeeper-constraints/chart/"
-  version   = "1.0.5"
+  version   = "1.0.6"
   namespace = "gatekeeper-system"
   values    = [data.template_file.gatekeeper-constraints.rendered]
 
@@ -35,5 +35,5 @@ resource "helm_release" "gatekeeper-constraints" {
 
 resource "time_sleep" "wait_for_eks_addons" {
   create_duration = "120s"
-  depends_on       = [module.eks_blueprints_kubernetes_addons]
+  # depends_on       = [module.eks_blueprints_kubernetes_addons]
 }
