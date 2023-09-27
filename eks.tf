@@ -13,6 +13,7 @@ locals {
   tags = var.tags
 
   nginx_ingress_server_snippet = <<EOT
+    client_max_body_size 50m;
     listen 8000;
     if ( $server_port = 80 ) {
       return 308 https://$host$request_uri;
