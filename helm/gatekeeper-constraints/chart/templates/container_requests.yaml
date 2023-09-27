@@ -16,6 +16,7 @@ spec:
     - cattle-system
     - ingress-nginx
     - zabbix
+    - fargate-*
   parameters:
     cpu: "{{ .Values.requests.cpu }}"
     memory: "{{ .Values.requests.memory }}"
