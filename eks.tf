@@ -27,7 +27,7 @@ locals {
 
 #tfsec:ignore:aws-eks-enable-control-plane-logging
 module "eks" {
-  source = "github.com/aws-ia/terraform-aws-eks-blueprints?ref=v4.27.0"
+  source = "github.com/aws-ia/terraform-aws-eks-blueprints?ref=v4.32.1"
   #source  = "terraform-aws-modules/eks/aws"
   #version = "~> 19.5"
 
@@ -70,97 +70,235 @@ module "eks" {
 ################################################################################
 # Kubernetes Addons
 ################################################################################
-#module "eks_blueprints_kubernetes_addons" {
-#  source = "github.com/aws-ia/terraform-aws-eks-blueprints-addons?ref=v1.7.2"
-#
-#  cluster_name      = module.eks.eks_cluster_id
-#  cluster_endpoint  = module.eks.eks_cluster_endpoint
-#  cluster_version   = module.eks.oidc_provider
-#  oidc_provider_arn = module.eks.eks_cluster_version
-#
-#  eks_addons = {
-#    aws-ebs-csi-driver = {
-#      most_recent = true
-#    }
-#    aws-efs-csi-driver = {
-#      most_recent = true
-#    }
-#    coredns = {
-#      most_recent = true
-#    }
-#    vpc-cni = {
-#      most_recent = true
-#    }
-#    kube-proxy = {
-#      most_recent = true
-#    }
+
+module "eks_blueprints_kubernetes_addons" {
+  source = "github.com/aws-ia/terraform-aws-eks-blueprints//modules/kubernetes-addons?ref=v4.32.1"
+  # source = "github.com/aws-ia/terraform-aws-eks-blueprints-addons?ref=v1.9.1"
+
+  eks_cluster_id       = module.eks.eks_cluster_id
+  eks_cluster_endpoint = module.eks.eks_cluster_endpoint
+  eks_oidc_provider    = module.eks.oidc_provider
+  eks_cluster_version  = module.eks.eks_cluster_version
+
+  # Wait on the `kube-system` profile before provisioning addons
+  data_plane_wait_arn = join(",", [for prof in module.eks.fargate_profiles : prof.eks_fargate_profile_arn])
+
+  # Enable Metrics server
+  enable_metrics_server = true
+
+  # Enable EFS CSI driver
+  enable_aws_efs_csi_driver = true
+
+  # Enable EBS CSI driver
+  enable_amazon_eks_aws_ebs_csi_driver = true
+
+  # Enable Cluster Autoscaler
+  enable_cluster_autoscaler = true
+
+  # Enable Prometheus
+  # enable_prometheus = true
+  # prometheus_helm_config = {
+  #    set = [
+  #      {
+  #         name  = "server.ingress.enabled"
+  #         value = "true"
+  #      },
+  #      {
+  #         name  = "server.ingress.annotations.alb\\.ingress\\.kubernetes\\.io/group\\.name"
+  #         value = "prometheus"
+  #      },
+  #      {
+  #         name  = "server.ingress.annotations.alb\\.ingress\\.kubernetes\\.io/listen-ports"
+  #         value = "[{\"HTTP\": 80}\\,{\"HTTPS\": 443}]"
+  #      },
+  #      {
+  #         name  = "server.ingress.annotations.alb\\.ingress\\.kubernetes\\.io/certificate-arn"
+  #         value = "${aws_acm_certificate.wildcard_ssl_certificate.arn}"
+  #      },
+  #      {
+  #         name  = "server.ingress.annotations.alb\\.ingress\\.kubernetes\\.io/scheme"
+  #         value = "internal"
+  #      },
+  #      {
+  #         name  = "server.ingress.annotations.alb\\.ingress\\.kubernetes\\.io/ssl-redirect"
+  #         value = "443"
+  #      },
+  #      {
+  #         name  = "server.ingress.annotations.kubernetes\\.io/ingress\\.class"
+  #         value = "alb"
+  #      },
+  #      {
+  #         name  = "server.ingress.hosts[0]"
+  #         value = "prometheus.${var.cluster_name}.private"
+  #      },
+  #      {
+  #         name  = "server.ingress.hosts[1]"
+  #         value = "prometheus-${var.cluster_name}.agcintranet.eu"
+  #      },
+  #      {
+  #         name  = "server.ingress.tls[0].hosts[0]"
+  #         value = "prometheus-${var.cluster_name}.agcintranet.eu"
+  #      }
+  #    ]
+  #  }
+
+  # Enable nginx ingress controller
+  enable_ingress_nginx = true
+  ingress_nginx_helm_config = {
+    set = [
+      {
+        name  = "controller.containerPort.http"
+        value = "80"
+      },
+      {
+        name  = "controller.containerPort.https"
+        value = "443"
+      },
+      {
+        name  = "controller.containerPort.special"
+        value = "8000"
+      },
+      {
+        name  = "controller.config.ssl-redirect"
+        value = "false"
+      },
+      {
+        name  = "controller.config.server-snippet"
+        value = local.nginx_ingress_server_snippet
+      },
+      {
+        name  = "controller.resources.limits.cpu"
+        value = "1000m"
+      },
+      {
+        name  = "controller.resources.limits.memory"
+        value = "2048Mi"
+      },
+      {
+        name  = "controller.service.enabled"
+        value = "true"
+      },
+      {
+        name  = "controller.service.ports.http"
+        value = "80"
+      },
+      {
+        name  = "controller.service.ports.https"
+        value = "443"
+      },
+      {
+        name  = "controller.service.targetPorts.http"
+        value = "http"
+      },
+      {
+        name  = "controller.service.targetPorts.https"
+        value = "special"
+      },
+      {
+        name  = "controller.service.type"
+        value = "LoadBalancer"
+      },
+      {
+        name  = "controller.service.external.enabled"
+        value = "false"
+      },
+      {
+        name  = "controller.service.internal.enabled"
+        value = "true"
+      },
+      {
+        name  = "controller.service.internal.annotations.service\\.beta\\.kubernetes\\.io/aws-load-balancer-internal"
+        value = "true"
+      },
+      {
+        name  = "controller.service.internal.annotations.service\\.beta\\.kubernetes\\.io/aws-load-balancer-nlb-target-type"
+        value = "ip"
+      },
+      {
+        name  = "controller.service.internal.annotations.service\\.beta\\.kubernetes\\.io/aws-load-balancer-scheme"
+        value = "internal"
+      },
+      {
+        name  = "controller.service.internal.annotations.service\\.beta\\.kubernetes\\.io/aws-load-balancer-ssl-cert"
+        value = aws_acm_certificate.wildcard_ssl_certificate.arn
+      },
+      {
+        name  = "controller.service.internal.annotations.service\\.beta\\.kubernetes\\.io/aws-load-balancer-ssl-ports"
+        value = "443"
+      },
+      {
+        name  = "controller.service.internal.annotations.service\\.beta\\.kubernetes\\.io/aws-load-balancer-type"
+        value = "nlb"
+      },
+      {
+        name  = "controller.service.internal.ports.http"
+        value = "80"
+      },
+      {
+        name  = "controller.service.internal.ports.https"
+        value = "443"
+      },
+      {
+        name  = "controller.service.internal.targetPorts.http"
+        value = "http"
+      },
+      {
+        name  = "controller.service.internal.targetPorts.https"
+        value = "special"
+      }
+    ]
+  }
+
+  # Enable Gatekeeper
+  enable_gatekeeper = true
+
+  # Enable Velero
+  enable_velero           = true
+  velero_backup_s3_bucket = module.s3_bucket_velero.s3_bucket_id
+
+  # Enable external-dns
+  enable_external_dns            = true
+  external_dns_private_zone      = true
+  external_dns_route53_zone_arns = [module.zones.route53_zone_zone_arn["${var.cluster_name}.private"]]
+  eks_cluster_domain             = "${var.cluster_name}.private"
+  external_dns_helm_config       = {
+    set_values   = [
+      {
+        name  = "policy"
+        value = "sync"
+      }
+    ]
+  }
+
+  # Enable Fargate logging
+  enable_fargate_fluentbit       = false
+  # fargate_fluentbit_addon_config = {
+  #    flb_log_cw = true
+  #    }
+
+  enable_aws_load_balancer_controller = true
+  aws_load_balancer_controller_helm_config = {
+    set_values = [
+      {
+        name  = "vpcId"
+        value = var.vpc_id
+      },
+      {
+        name  = "podDisruptionBudget.maxUnavailable"
+        value = 1
+      },
+    ]
+  }
+
+
+  tags = local.tags
+  depends_on = [module.zones]
+}
+
+# TODO ?
+#  private_subnet_tags = {
+#    "kubernetes.io/role/internal-elb" = 1
 #  }
-#
-#  # Enable Metrics server
-#  enable_metrics_server = true
-#
-#  # Enable EFS CSI driver
-#  # enable_aws_efs_csi_driver = true
-#
-#  # Enable EBS CSI driver
-#  # enable_amazon_eks_aws_ebs_csi_driver = true
-#
-#  # Enable Cluster Autoscaler
-#  enable_cluster_autoscaler = true
-#
-#  # Enable nginx ingress controller
-#  enable_ingress_nginx = true
-#  ingress_nginx = {
-#    values = [
-#      templatefile("${path.module}/templates/ingress_nginx-values.yaml.tmpl",
-#      {
-#        server_snippet = local.nginx_ingress_server_snippet
-#      })
-#    ]
-#  }
-#
-#  # Enable Gatekeeper
-#  enable_gatekeeper = true
-#
-#  # Enable Velero
-#  enable_velero = true
-#  velero = {
-#    s3_backup_location = module.s3_bucket_velero.s3_bucket_id
-#  }
-#
-#  # Enable external-dns
-#  #enable_external_dns            = true
-#  #external_dns_private_zone      = true
-#  #external_dns_route53_zone_arns = [module.zones.route53_zone_zone_arn["${var.cluster_name}.private"]]
-#  #eks_cluster_domain             = "${var.cluster_name}.private"
-#  #external_dns_helm_config       = {
-#  #    set_values   = [
-#  #      {
-#  #        name  = "policy"
-#  #        value = "sync"
-#  #      }
-#  #    ]
-#  #}
-#
-#  # Enable Fargate logging
-#  enable_fargate_fluentbit       = false
-#  # fargate_fluentbit_addon_config = {
-#  #    flb_log_cw = true
-#  #    }
-#
-#  enable_aws_load_balancer_controller = true
-#  aws_load_balancer_controller = {
-#    values = [
-#      templatefile("${path.module}/templates/aws_load_balancer_controller_values.yaml.tmpl",
-#      {
-#        vpc_id              = var.vpc_id
-#      })
-#    ]
-#  }
-#
-#  tags = local.tags
-#  depends_on = [module.zones]
-#}
 
 module "efs" {
   source  = "terraform-aws-modules/efs/aws"
