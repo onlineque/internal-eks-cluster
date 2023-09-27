@@ -27,21 +27,23 @@ locals {
 
 #tfsec:ignore:aws-eks-enable-control-plane-logging
 module "eks" {
-  source = "github.com/aws-ia/terraform-aws-eks-blueprints?ref=v4.32.1"
-  #source  = "terraform-aws-modules/eks/aws"
-  #version = "~> 19.5"
+  # source = "github.com/aws-ia/terraform-aws-eks-blueprints?ref=v4.32.1"
+  source  = "terraform-aws-modules/eks/aws"
+  version = "~> 19.16"
 
   cluster_name                   = var.cluster_name
   cluster_version                = var.cluster_version
   cluster_endpoint_public_access = true
 
-  platform_teams    = var.platform_teams
-  application_teams = var.application_teams
+  # Todo via aws-eks teams
+  # platform_teams    = var.platform_teams
+  # application_teams = var.application_teams
 
   vpc_id     = var.vpc_id
-  private_subnet_ids = local.private_subnets
+  subnet_ids = local.private_subnets
 
-  managed_node_groups = var.managed_node_groups
+  # Todo wtf ?
+  # managed_node_groups = var.managed_node_groups
 
   # Fargate profiles use the cluster primary security group so these are not utilized
   #create_cluster_security_group = false
@@ -51,8 +53,8 @@ module "eks" {
   fargate_profiles = merge(
     { for i in range(2) :
       "app-wildcard-${element(split("-", local.azs[i]), 2)}" => {
-        fargate_profile_name = "default-app-wildcard-${element(split("-", local.azs[i]), 2)}"
-        fargate_profile_namespaces = [
+        profile_name = "default-app-wildcard-${element(split("-", local.azs[i]), 2)}"
+        selectors = [
           {
             namespace:  "fargate-*"
           }
@@ -68,29 +70,57 @@ module "eks" {
 }
 
 ################################################################################
+# Kubernetes Teams
+################################################################################
+module "eks_blueprints_admin_team" {
+    source = "aws-ia/eks-blueprints-teams/aws"
+    version = "~> 1.0.0"
+
+    name = "admin-team"
+    enable_admin = true
+    users = [
+        # Todo: remove hard-coding
+        "arn:aws:iam::941876512626:role/aws-reserved/sso.amazonaws.com/eu-west-1/AWSReservedSSO_AGC-EKS-Admin-Team_e305528ae180e464"
+    ]
+    cluster_arn = module.eks.cluster_arn
+    tags = local.tags
+}
+
+################################################################################
 # Kubernetes Addons
 ################################################################################
+module "eks_blueprints_addons" {
+  source  = "aws-ia/eks-blueprints-addons/aws"
+  version = "~> 1.0"
 
-module "eks_blueprints_kubernetes_addons" {
-  source = "github.com/aws-ia/terraform-aws-eks-blueprints//modules/kubernetes-addons?ref=v4.32.1"
-  # source = "github.com/aws-ia/terraform-aws-eks-blueprints-addons?ref=v1.9.1"
+  cluster_name      = module.eks.cluster_name
+  cluster_endpoint  = module.eks.cluster_endpoint
+  cluster_version   = module.eks.cluster_version
+  oidc_provider_arn = module.eks.oidc_provider_arn
 
-  eks_cluster_id       = module.eks.eks_cluster_id
-  eks_cluster_endpoint = module.eks.eks_cluster_endpoint
-  eks_oidc_provider    = module.eks.oidc_provider
-  eks_cluster_version  = module.eks.eks_cluster_version
+  # We want to wait for the Fargate profiles to be deployed first
+  create_delay_dependencies = [for prof in module.eks.fargate_profiles : prof.fargate_profile_arn]
 
-  # Wait on the `kube-system` profile before provisioning addons
-  data_plane_wait_arn = join(",", [for prof in module.eks.fargate_profiles : prof.eks_fargate_profile_arn])
+  eks_addons = {
+    aws-ebs-csi-driver = {  # Replace enable_amazon_eks_aws_ebs_csi_driver
+      most_recent = true
+    }
+    coredns = {
+      most_recent = true
+    }
+    vpc-cni = {
+      most_recent = true
+    }
+    kube-proxy = {
+      most_recent = true
+    }
+  }
 
   # Enable Metrics server
   enable_metrics_server = true
 
   # Enable EFS CSI driver
   enable_aws_efs_csi_driver = true
-
-  # Enable EBS CSI driver
-  enable_amazon_eks_aws_ebs_csi_driver = true
 
   # Enable Cluster Autoscaler
   enable_cluster_autoscaler = true
@@ -144,7 +174,7 @@ module "eks_blueprints_kubernetes_addons" {
 
   # Enable nginx ingress controller
   enable_ingress_nginx = true
-  ingress_nginx_helm_config = {
+  ingress_nginx = {
     set = [
       {
         name  = "controller.containerPort.http"
@@ -254,31 +284,29 @@ module "eks_blueprints_kubernetes_addons" {
 
   # Enable Velero
   enable_velero           = true
-  velero_backup_s3_bucket = module.s3_bucket_velero.s3_bucket_id
+  velero = {
+    s3_backup_location = module.s3_bucket_velero.s3_bucket_id
+  }
 
   # Enable external-dns
   enable_external_dns            = true
-  external_dns_private_zone      = true
-  external_dns_route53_zone_arns = [module.zones.route53_zone_zone_arn["${var.cluster_name}.private"]]
-  eks_cluster_domain             = "${var.cluster_name}.private"
-  external_dns_helm_config       = {
-    set_values   = [
+  external_dns = {
+    namespace = "${var.cluster_name}.private" # todo: not sure at all
+    set = [
       {
         name  = "policy"
         value = "sync"
       }
     ]
   }
+  external_dns_route53_zone_arns = [module.zones.route53_zone_zone_arn["${var.cluster_name}.private"]]
 
   # Enable Fargate logging
-  enable_fargate_fluentbit       = false
-  # fargate_fluentbit_addon_config = {
-  #    flb_log_cw = true
-  #    }
+  enable_fargate_fluentbit = false
 
   enable_aws_load_balancer_controller = true
-  aws_load_balancer_controller_helm_config = {
-    set_values = [
+  aws_load_balancer_controller = {
+    set = [
       {
         name  = "vpcId"
         value = var.vpc_id
@@ -290,9 +318,7 @@ module "eks_blueprints_kubernetes_addons" {
     ]
   }
 
-
   tags = local.tags
-  depends_on = [module.zones]
 }
 
 # TODO ?
