@@ -27,21 +27,47 @@ locals {
 
 #tfsec:ignore:aws-eks-enable-control-plane-logging
 module "eks" {
-  source = "github.com/aws-ia/terraform-aws-eks-blueprints?ref=v4.32.1"
-  #source  = "terraform-aws-modules/eks/aws"
-  #version = "~> 19.5"
+  # source = "github.com/aws-ia/terraform-aws-eks-blueprints?ref=v4.32.1"
+  source  = "terraform-aws-modules/eks/aws"
+  version = "~> 19.13"
 
   cluster_name                   = var.cluster_name
   cluster_version                = var.cluster_version
-  cluster_endpoint_public_access = true
 
-  platform_teams    = var.platform_teams
-  application_teams = var.application_teams
+  ####
+  # Backwards compatibility
+  ####
+  cluster_endpoint_public_access = true
+  cluster_enabled_log_types      = ["api", "audit", "authenticator", "controllerManager", "scheduler"]
+  iam_role_name                  = "${var.cluster_name}-cluster-role"
+  iam_role_use_name_prefix       = false
+  kms_key_aliases = [var.cluster_name]
+
+  # Todo: define what this is and how to import it
+  # platform_teams    = var.platform_teams
+  # application_teams = var.application_teams
 
   vpc_id     = var.vpc_id
-  private_subnet_ids = local.private_subnets
+  subnet_ids = local.private_subnets
 
-  managed_node_groups = var.managed_node_groups
+  eks_managed_node_groups = {
+    for k1, v1 in var.managed_node_groups :
+        k1 => {
+            ####
+            # Backwards compatibility
+            ####
+            iam_role_name              = "${var.cluster_name}-${k1}"
+            iam_role_use_name_prefix   = false
+            use_custom_launch_template = false
+
+            instance_types = v1.instance_types
+            min_size = v1.min_size
+            max_size = v1.max_size
+            desired_size = v1.desired_size
+            disk_size = v1.disk_size
+            labels = v1.labels
+        }
+  }
 
   # Fargate profiles use the cluster primary security group so these are not utilized
   #create_cluster_security_group = false
@@ -51,8 +77,14 @@ module "eks" {
   fargate_profiles = merge(
     { for i in range(2) :
       "app-wildcard-${element(split("-", local.azs[i]), 2)}" => {
-        fargate_profile_name = "default-app-wildcard-${element(split("-", local.azs[i]), 2)}"
-        fargate_profile_namespaces = [
+        ####
+        # Backwards compatibility
+        ####
+        iam_role_name            = "${var.cluster_name}-app-wildcard-${element(split("-", local.azs[i]), 2)}"
+        iam_role_use_name_prefix = false
+
+        profile_name = "default-app-wildcard-${element(split("-", local.azs[i]), 2)}"
+        selectors = [
           {
             namespace:  "fargate-*"
           }
@@ -75,10 +107,10 @@ module "eks_blueprints_kubernetes_addons" {
   source = "github.com/aws-ia/terraform-aws-eks-blueprints//modules/kubernetes-addons?ref=v4.32.1"
   # source = "github.com/aws-ia/terraform-aws-eks-blueprints-addons?ref=v1.9.1"
 
-  eks_cluster_id       = module.eks.eks_cluster_id
-  eks_cluster_endpoint = module.eks.eks_cluster_endpoint
+  eks_cluster_id       = module.eks.cluster_id
+  eks_cluster_endpoint = module.eks.cluster_endpoint
   eks_oidc_provider    = module.eks.oidc_provider
-  eks_cluster_version  = module.eks.eks_cluster_version
+  eks_cluster_version  = module.eks.cluster_version
 
   # Wait on the `kube-system` profile before provisioning addons
   data_plane_wait_arn = join(",", [for prof in module.eks.fargate_profiles : prof.eks_fargate_profile_arn])
