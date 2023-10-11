@@ -317,18 +317,18 @@ module "eks_blueprints_kubernetes_addons" {
   #    }
 
   enable_aws_load_balancer_controller = true
-  aws_load_balancer_controller = { # Todo check
-    values = [
-      {
-        name  = "vpcId"
-        value = var.vpc_id
-      },
-      {
-        name  = "podDisruptionBudget.maxUnavailable"
-        value = 1
-      },
-    ]
-  }
+#   aws_load_balancer_controller = { # Todo check
+#     values = [
+#       {
+#         name  = "vpcId"
+#         value = var.vpc_id
+#       },
+#       {
+#         name  = "podDisruptionBudget.maxUnavailable"
+#         value = 1
+#       },
+#     ]
+#   }
 
   tags = local.tags
   depends_on = [module.zones]
