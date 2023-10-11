@@ -104,16 +104,17 @@ module "eks" {
 ################################################################################
 
 module "eks_blueprints_kubernetes_addons" {
-  source = "github.com/aws-ia/terraform-aws-eks-blueprints//modules/kubernetes-addons?ref=v4.32.1"
-  # source = "github.com/aws-ia/terraform-aws-eks-blueprints-addons?ref=v1.9.1"
+  # source = "github.com/aws-ia/terraform-aws-eks-blueprints//modules/kubernetes-addons?ref=v4.32.1"
+  source = "aws-ia/eks-blueprints-addons/aws"
+  version = "~> 1.0"
 
-  eks_cluster_id       = module.eks.cluster_id
-  eks_cluster_endpoint = module.eks.cluster_endpoint
-  eks_oidc_provider    = module.eks.oidc_provider
-  eks_cluster_version  = module.eks.cluster_version
+  cluster_name      = module.eks.cluster_name
+  cluster_endpoint  = module.eks.cluster_endpoint
+  cluster_version   = module.eks.cluster_version
+  oidc_provider_arn = module.eks.oidc_provider_arn
 
-  # Wait on the `kube-system` profile before provisioning addons
-  data_plane_wait_arn = join(",", [for prof in module.eks.fargate_profiles : prof.eks_fargate_profile_arn])
+  # We want to wait for the Fargate profiles to be deployed first
+  create_delay_dependencies = [for prof in module.eks.fargate_profiles : prof.fargate_profile_arn]
 
   # Enable Metrics server
   enable_metrics_server = true
@@ -121,8 +122,9 @@ module "eks_blueprints_kubernetes_addons" {
   # Enable EFS CSI driver
   enable_aws_efs_csi_driver = true
 
+  # Todo
   # Enable EBS CSI driver
-  enable_amazon_eks_aws_ebs_csi_driver = true
+  # enable_amazon_eks_aws_ebs_csi_driver = true
 
   # Enable Cluster Autoscaler
   enable_cluster_autoscaler = true
@@ -176,7 +178,7 @@ module "eks_blueprints_kubernetes_addons" {
 
   # Enable nginx ingress controller
   enable_ingress_nginx = true
-  ingress_nginx_helm_config = {
+  ingress_nginx = {
     set = [
       {
         name  = "controller.containerPort.http"
@@ -286,21 +288,27 @@ module "eks_blueprints_kubernetes_addons" {
 
   # Enable Velero
   enable_velero           = true
-  velero_backup_s3_bucket = module.s3_bucket_velero.s3_bucket_id
+  velero = {
+    s3_backup_location = module.s3_bucket_velero.s3_bucket_id
+  }
 
   # Enable external-dns
   enable_external_dns            = true
-  external_dns_private_zone      = true
   external_dns_route53_zone_arns = [module.zones.route53_zone_zone_arn["${var.cluster_name}.private"]]
-  eks_cluster_domain             = "${var.cluster_name}.private"
-  external_dns_helm_config       = {
-    set_values   = [
-      {
-        name  = "policy"
-        value = "sync"
+
+  external_dns = { # todo check
+    # private_zone      = true
+    eks_cluster_domain             = "${var.cluster_name}.private"
+    external_dns_helm_config       = {
+        set_values   = [
+          {
+            name  = "policy"
+            value = "sync"
+          }
+        ]
       }
-    ]
   }
+
 
   # Enable Fargate logging
   enable_fargate_fluentbit       = false
@@ -309,8 +317,8 @@ module "eks_blueprints_kubernetes_addons" {
   #    }
 
   enable_aws_load_balancer_controller = true
-  aws_load_balancer_controller_helm_config = {
-    set_values = [
+  aws_load_balancer_controller = { # Todo check
+    values = [
       {
         name  = "vpcId"
         value = var.vpc_id
@@ -321,7 +329,6 @@ module "eks_blueprints_kubernetes_addons" {
       },
     ]
   }
-
 
   tags = local.tags
   depends_on = [module.zones]
