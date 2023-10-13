@@ -16,6 +16,7 @@ spec:
     - cattle-system
     - ingress-nginx
     - zabbix
+    - airbyte
     - fargate-*
   parameters:
     cpu: "{{ .Values.requests.cpu }}"
