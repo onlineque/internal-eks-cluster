@@ -294,12 +294,14 @@ module "eks_blueprints_kubernetes_addons" {
 
   # Enable external-dns
   enable_external_dns            = true
-  external_dns_route53_zone_arns = [module.zones.route53_zone_zone_arn["${var.cluster_name}.private"]]
 
   external_dns = { # todo check
-    # private_zone      = true
-    eks_cluster_domain             = "${var.cluster_name}.private"
-    external_dns_helm_config       = {
+    route53_zone_zone_arns = [module.zones.route53_zone_zone_arn["${var.cluster_name}.private"]]
+    # private_zone      = true # deprecated
+    addon_context = {
+        eks_cluster_name = "${var.cluster_name}"
+    }
+    helm_config       = {
         set_values   = [
           {
             name  = "policy"
@@ -317,18 +319,18 @@ module "eks_blueprints_kubernetes_addons" {
   #    }
 
   enable_aws_load_balancer_controller = true
-#   aws_load_balancer_controller = { # Todo check
-#     values = [
-#       {
-#         name  = "vpcId"
-#         value = var.vpc_id
-#       },
-#       {
-#         name  = "podDisruptionBudget.maxUnavailable"
-#         value = 1
-#       },
-#     ]
-#   }
+  aws_load_balancer_controller = { # Todo check
+    values = [
+      {
+        name  = "vpcId"
+        value = var.vpc_id
+      },
+      {
+        name  = "podDisruptionBudget.maxUnavailable"
+        value = 1
+      },
+    ]
+  }
 
   tags = local.tags
   depends_on = [module.zones]
