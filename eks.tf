@@ -68,6 +68,10 @@ module "eks" {
             desired_size = v1.desired_size
             disk_size = v1.disk_size
             labels = v1.labels
+
+            iam_role_additional_policies = {
+              AmazonSSMManagedInstanceCore = "arn:aws:iam::aws:policy/AmazonSSMManagedInstanceCore"
+            }
         }
   }
 
@@ -134,8 +138,29 @@ module "eks_blueprints_addon" {
   source = "aws-ia/eks-blueprints-addon/aws"
   version = "~> 1.0" #ensure to update this to the latest/desired version
 
-  # Disable helm release
-  create_release = false
+  # Create helm release
+  chart            = "karpenter"
+  chart_version    = "0.16.2"
+  repository       = "https://charts.karpenter.sh/"
+  description      = "Kubernetes Node Autoscaling: built for flexibility, performance, and simplicity"
+  namespace        = "karpenter"
+  create_namespace = true
+
+  set = [
+    {
+      name  = "clusterName"
+      value = module.eks.cluster_name
+    },
+    {
+      name  = "clusterEndpoint"
+      value = module.eks.cluster_endpoint
+    },
+    {
+      name  = "aws.defaultInstanceProfile"
+      value = "arn:aws:iam::${var.aws_account_id}:instance-profile/test-euw1-private-initial"
+    }
+  ]
+
 
   # IAM role for service account (IRSA)
   create_role = true
