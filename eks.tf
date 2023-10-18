@@ -147,7 +147,7 @@ module "eks_blueprints_addon" {
 
   oidc_providers = {
     this = {
-      provider_arn    = eks.oidc_provider
+      provider_arn    = eks.oidc_provider_arn
       namespace       = "kube-system"
       service_account = "aws-node"
     }
