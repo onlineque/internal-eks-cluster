@@ -358,7 +358,7 @@ module "eks_blueprints_kubernetes_addons" {
   # Enable Velero
   enable_velero           = true
   velero = {
-    s3_backup_location = module.s3_bucket_velero.bucket_arn
+    s3_backup_location = module.s3_bucket_velero.s3_bucket_arn
   }
 
   # Enable external-dns
