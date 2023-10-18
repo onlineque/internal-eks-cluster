@@ -37,8 +37,8 @@ module "eks" {
   ####
   # Backwards compatibility
   ####
-  cluster_endpoint_public_access = false
-  cluster_endpoint_private_access = true
+  cluster_endpoint_public_access = true
+  cluster_endpoint_private_access = false
   cluster_enabled_log_types      = ["api", "audit", "authenticator", "controllerManager", "scheduler"]
   iam_role_name                  = "${var.cluster_name}-cluster-role"
   iam_role_use_name_prefix       = false
