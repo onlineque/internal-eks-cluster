@@ -123,7 +123,7 @@ module "platform_teams" {
   # Enables elevated, admin privileges for this team
   enable_admin = true
   users        = ["arn:aws:iam::941876512626:role/aws-reserved/sso.amazonaws.com/eu-west-1/AWSReservedSSO_AGC-EKS-Admin-Team_e305528ae180e464"]
-  cluster_arn  = eks.cluster_arn
+  cluster_arn  = module.eks.cluster_arn
 }
 
 ################################################################################
@@ -147,7 +147,7 @@ module "eks_blueprints_addon" {
 
   oidc_providers = {
     this = {
-      provider_arn    = eks.oidc_provider_arn
+      provider_arn    = module.eks.oidc_provider_arn
       namespace       = "kube-system"
       service_account = "aws-node"
     }
