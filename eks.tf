@@ -37,11 +37,13 @@ module "eks" {
   ####
   # Backwards compatibility
   ####
-  cluster_endpoint_public_access = true
+  cluster_endpoint_public_access = false
+  cluster_endpoint_private_access = true
   cluster_enabled_log_types      = ["api", "audit", "authenticator", "controllerManager", "scheduler"]
   iam_role_name                  = "${var.cluster_name}-cluster-role"
   iam_role_use_name_prefix       = false
   kms_key_aliases = [var.cluster_name]
+  create_cloudwatch_log_group = false
 
   # Todo: define what this is and how to import it
   # platform_teams    = var.platform_teams
@@ -80,7 +82,7 @@ module "eks" {
         ####
         # Backwards compatibility
         ####
-        iam_role_name            = "${var.cluster_name}-app-wildcard-${element(split("-", local.azs[i]), 2)}"
+        iam_role_name            = "${var.cluster_name}-default-app-wildcard-${element(split("-", local.azs[i]), 2)}"
         iam_role_use_name_prefix = false
 
         profile_name = "default-app-wildcard-${element(split("-", local.azs[i]), 2)}"
@@ -99,6 +101,63 @@ module "eks" {
   tags = local.tags
 }
 
+# Backward compatibility
+resource aws_iam_instance_profile "managed_ng" {
+  name = "${var.cluster_name}-initial"
+}
+resource "aws_iam_role_policy_attachment" "managed_ng" {
+  policy_arn = "arn:aws:iam::aws:policy/AmazonSSMManagedInstanceCore"
+  role       = "test-euw1-private-initial" # linked to ${var.cluster_name}-managed_node_groups-$k1
+}
+
+
+################################################################################
+# Kubernetes Teams
+################################################################################
+
+module "platform_teams" {
+  source = "aws-ia/eks-blueprints-teams/aws"
+
+  name = "admin-team"
+
+  # Enables elevated, admin privileges for this team
+  enable_admin = true
+  users        = ["arn:aws:iam::941876512626:role/aws-reserved/sso.amazonaws.com/eu-west-1/AWSReservedSSO_AGC-EKS-Admin-Team_e305528ae180e464"]
+  cluster_arn  = eks.cluster_arn
+}
+
+################################################################################
+# Kubernetes Addon
+################################################################################
+
+module "eks_blueprints_addon" {
+  source = "aws-ia/eks-blueprints-addon/aws"
+  version = "~> 1.0" #ensure to update this to the latest/desired version
+
+  # Disable helm release
+  create_release = false
+
+  # IAM role for service account (IRSA)
+  create_role = true
+  create_policy = false
+  role_name   = "aws-vpc-cni-ipv4"
+  role_policies = {
+    AmazonEKS_CNI_Policy = "arn:aws:iam::aws:policy/AmazonEKS_CNI_Policy"
+  }
+
+  oidc_providers = {
+    this = {
+      provider_arn    = eks.oidc_provider
+      namespace       = "kube-system"
+      service_account = "aws-node"
+    }
+  }
+
+  tags = {
+    Environment = "dev"
+  }
+}
+
 ################################################################################
 # Kubernetes Addons
 ################################################################################
@@ -112,6 +171,12 @@ module "eks_blueprints_kubernetes_addons" {
   cluster_endpoint  = module.eks.cluster_endpoint
   cluster_version   = module.eks.cluster_version
   oidc_provider_arn = module.eks.oidc_provider_arn
+
+  eks_addons = {
+    aws-ebs-csi-driver = {
+      most_recent = true
+    }
+  }
 
   # We want to wait for the Fargate profiles to be deployed first
   create_delay_dependencies = [for prof in module.eks.fargate_profiles : prof.fargate_profile_arn]
