@@ -370,14 +370,15 @@ module "eks_blueprints_kubernetes_addons" {
     addon_context = {
         eks_cluster_name = "${var.cluster_name}"
     }
-    helm_config       = {
-        set_values   = [
-          {
-            name  = "policy"
-            value = "sync"
-          }
-        ]
+
+    create_role = true
+
+    set = [
+      {
+        name  = "policy"
+        value = "sync"
       }
+    ]
   }
 
 
