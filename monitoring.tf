@@ -156,54 +156,54 @@ module "loki_s3_irsa" {
   tags = var.tags
 }
 
-resource "helm_release" "loki" {
-  name       = "loki"
-  namespace  = local.monitoring_namespace
-  repository = "https://grafana.github.io/helm-charts"
-  chart      = "loki"
-  version    = "5.5.11"
-  values = [
-    templatefile("${path.module}/templates/loki-values.yaml.tmpl",
-      {
-        loki_bucket                = local.loki_bucket
-        sa_role_arn                = module.loki_s3_irsa.iam_role_arn
-        region                     = var.aws_region
-        loki_gateway_route53_fqdn  = var.loki_gateway_route53_fqdn
-        loki_gateway_internal_fqdn = var.loki_gateway_internal_fqdn
-    })
-  ]
-  #won't create resource unless namespace 'monitoring' is created and addons up
-  depends_on = [kubernetes_namespace.monitoring,time_sleep.wait_for_eks_addons]
-}
-
-resource "helm_release" "promtail" {
-  name       = "promtail"
-  namespace  = local.monitoring_namespace
-  repository = "https://grafana.github.io/helm-charts"
-  chart      = "promtail"
-  version    = "6.11.3"
-  values = [
-    templatefile("${path.module}/templates/promtail-values.yaml.tmpl",
-      {
-        loki_gateway_monitoring_url = local.loki_gateway_monitoring_url
-    })
-  ]
-  #won't create resource unless namespace 'monitoring' is created
-  depends_on = [kubernetes_namespace.monitoring,time_sleep.wait_for_eks_addons]
-}
-
-resource "helm_release" "kubernetes_event_exporter" {
-  name       = "kubernetes-event-exporter"
-  namespace  = local.monitoring_namespace
-  repository = "https://charts.bitnami.com/bitnami"
-  chart      = "kubernetes-event-exporter"
-  version    = "2.5.3"
-  values = [
-    templatefile("${path.module}/templates/kubernetes-event-exporter.yaml.tmpl",
-      {
-        loki_gateway_monitoring_url = local.loki_gateway_monitoring_url
-    })
-  ]
-  #won't create resource unless namespace 'monitoring' is created
-  depends_on = [kubernetes_namespace.monitoring,time_sleep.wait_for_eks_addons]
-}
+#resource "helm_release" "loki" {
+#  name       = "loki"
+#  namespace  = local.monitoring_namespace
+#  repository = "https://grafana.github.io/helm-charts"
+#  chart      = "loki"
+#  version    = "5.5.11"
+#  values = [
+#    templatefile("${path.module}/templates/loki-values.yaml.tmpl",
+#      {
+#        loki_bucket                = local.loki_bucket
+#        sa_role_arn                = module.loki_s3_irsa.iam_role_arn
+#        region                     = var.aws_region
+#        loki_gateway_route53_fqdn  = var.loki_gateway_route53_fqdn
+#        loki_gateway_internal_fqdn = var.loki_gateway_internal_fqdn
+#    })
+#  ]
+#  #won't create resource unless namespace 'monitoring' is created and addons up
+#  depends_on = [kubernetes_namespace.monitoring,time_sleep.wait_for_eks_addons]
+#}
+#
+#resource "helm_release" "promtail" {
+#  name       = "promtail"
+#  namespace  = local.monitoring_namespace
+#  repository = "https://grafana.github.io/helm-charts"
+#  chart      = "promtail"
+#  version    = "6.11.3"
+#  values = [
+#    templatefile("${path.module}/templates/promtail-values.yaml.tmpl",
+#      {
+#        loki_gateway_monitoring_url = local.loki_gateway_monitoring_url
+#    })
+#  ]
+#  #won't create resource unless namespace 'monitoring' is created
+#  depends_on = [kubernetes_namespace.monitoring,time_sleep.wait_for_eks_addons]
+#}
+#
+#resource "helm_release" "kubernetes_event_exporter" {
+#  name       = "kubernetes-event-exporter"
+#  namespace  = local.monitoring_namespace
+#  repository = "https://charts.bitnami.com/bitnami"
+#  chart      = "kubernetes-event-exporter"
+#  version    = "2.5.3"
+#  values = [
+#    templatefile("${path.module}/templates/kubernetes-event-exporter.yaml.tmpl",
+#      {
+#        loki_gateway_monitoring_url = local.loki_gateway_monitoring_url
+#    })
+#  ]
+#  #won't create resource unless namespace 'monitoring' is created
+#  depends_on = [kubernetes_namespace.monitoring,time_sleep.wait_for_eks_addons]
+#}
