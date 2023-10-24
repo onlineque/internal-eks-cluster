@@ -363,9 +363,10 @@ module "eks_blueprints_kubernetes_addons" {
 
   # Enable external-dns
   enable_external_dns            = true
+  external_dns_route53_zone_arns = [module.zones.route53_zone_zone_arn["${var.cluster_name}.private"]]
 
   external_dns = { # todo check
-    route53_zone_zone_arns = [module.zones.route53_zone_zone_arn["${var.cluster_name}.private"]]
+    # route53_zone_zone_arns = [module.zones.route53_zone_zone_arn["${var.cluster_name}.private"]]
     # private_zone      = true # deprecated
     addon_context = {
         eks_cluster_name = "${var.cluster_name}"
