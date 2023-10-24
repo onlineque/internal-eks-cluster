@@ -362,7 +362,7 @@ module "eks_blueprints_kubernetes_addons" {
   }
 
   # Enable external-dns
-  enable_external_dns            = true
+  enable_external_dns            = false
   external_dns_route53_zone_arns = [module.zones.route53_zone_zone_arn["${var.cluster_name}.private"]]
 
   external_dns = { # todo check
