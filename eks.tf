@@ -52,6 +52,11 @@ module "eks" {
   vpc_id     = var.vpc_id
   subnet_ids = local.private_subnets
 
+  manage_aws_auth_configmap = true
+  aws_auth_roles = flatten([
+    module.admin_team.aws_auth_configmap_role,
+  ])
+
   eks_managed_node_groups = {
     for k1, v1 in var.managed_node_groups :
         k1 => {
@@ -119,7 +124,7 @@ resource "aws_iam_role_policy_attachment" "managed_ng" {
 # Kubernetes Teams
 ################################################################################
 
-module "platform_teams" {
+module "admin_team" {
   source = "aws-ia/eks-blueprints-teams/aws"
 
   name = "admin-team"
