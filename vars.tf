@@ -51,7 +51,6 @@ variable "tags" {
 
 variable "managed_node_groups" {
   type        = map(object({
-    node_group_name = string
     instance_types = list(string)
 
     min_size     = number
@@ -59,7 +58,7 @@ variable "managed_node_groups" {
     desired_size = number
     disk_size    = number
 
-    additional_tags = map(string)
+    labels = map(string)
   }))
   default     = {}
 }
