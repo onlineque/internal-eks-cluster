@@ -131,7 +131,7 @@ module "admin_team" {
 
   # Enables elevated, admin privileges for this team
   enable_admin = true
-  users        = ["arn:aws:iam::941876512626:role/aws-reserved/sso.amazonaws.com/eu-west-1/AWSReservedSSO_AGC-EKS-Admin-Team_e305528ae180e464"]
+  users        = [var.admin_team_arn]
   cluster_arn  = module.eks.cluster_arn
 }
 

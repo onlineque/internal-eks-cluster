@@ -92,6 +92,11 @@ variable "ca_crt_secret" {
   description = "Secret ARN for CA certificate secret, only the part after the last slash"
 }
 
+variable "admin_team_arn" {
+  type        = string
+  description = "ARN of the Admin Team for this cluster"
+}
+
 variable "pod_cpu_limit" {
   type        = string
   description = "maximum pod CPU limit"
