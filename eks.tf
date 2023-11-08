@@ -116,7 +116,7 @@ resource aws_iam_instance_profile "managed_ng" {
 }
 resource "aws_iam_role_policy_attachment" "managed_ng" {
   policy_arn = "arn:aws:iam::aws:policy/AmazonSSMManagedInstanceCore"
-  role       = "test-euw1-private-initial" # linked to ${var.cluster_name}-managed_node_groups-$k1
+  role       = "${var.cluster_name}-initial" # linked to ${var.cluster_name}-managed_node_groups-$k1
 }
 
 
