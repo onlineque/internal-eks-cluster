@@ -377,7 +377,7 @@ module "eks_blueprints_kubernetes_addons" {
   }
 
   # Enable Gatekeeper
-  enable_gatekeeper = true
+  enable_gatekeeper = false
 
   # Enable Velero
   enable_velero           = true
