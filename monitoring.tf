@@ -25,7 +25,10 @@ resource "helm_release" "kube-prometheus-stack" {
     })
   ]
 
-  depends_on = [time_sleep.wait_for_eks_addons,kubernetes_namespace.monitoring]
+  depends_on = [
+  time_sleep.wait_for_eks_addons,
+  kubernetes_namespace.monitoring
+  ]
 }
 
 # loki
@@ -131,7 +134,7 @@ module "loki_s3_policy" {
   source  = "terraform-aws-modules/iam/aws//modules/iam-policy"
   version = "5.17.0"
 
-  name        = "loki-s3"
+  name        = "loki-s3-inve"
   description = "Access to loki S3 bucket from loki itself"
   tags        = var.tags
   policy      = data.aws_iam_policy_document.loki_s3_policy.json
@@ -141,7 +144,7 @@ module "loki_s3_irsa" {
   source  = "terraform-aws-modules/iam/aws//modules/iam-eks-role"
   version = "5.17.0"
 
-  role_name        = "loki-s3-irsa"
+  role_name        = "loki-s3-irsa-inve"
   role_description = "IRSA for Loki to access its S3 bucket"
   role_policy_arns = {
     policy = module.loki_s3_policy.arn
@@ -152,6 +155,10 @@ module "loki_s3_irsa" {
       local.loki_serviceaccount,
     ]
   }
+
+  depends_on = [
+    module.eks
+  ]
 
   tags = var.tags
 }

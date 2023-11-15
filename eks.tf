@@ -107,6 +107,15 @@ module "eks" {
     }
   )
 
+  cluster_addons = {
+    coredns = {
+      addon_version = "v1.24.7"
+    }
+    kube-proxy = {
+      addon_version = "v1.8.7"
+    }
+  }
+
   tags = local.tags
 }
 
