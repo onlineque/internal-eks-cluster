@@ -378,6 +378,21 @@ module "eks_blueprints_kubernetes_addons" {
 
   # Enable Gatekeeper
   enable_gatekeeper = true
+  gatekeeper = {
+    values = [
+      <<-EOT
+        postInstall:
+          labelNamespace:
+            extraRules:
+            - apiGroups:
+              - management.cattle.io
+              resources:
+              - projects
+              verbs:
+              - updatepsa
+      EOT
+    ]
+  }
 
   # Enable Velero
   enable_velero           = true
