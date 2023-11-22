@@ -201,8 +201,17 @@ module "eks_blueprints_kubernetes_addons" {
 
   eks_addons = {
     aws-ebs-csi-driver = {
-      most_recent = true
+     # addon_version = "v1.25.0"
+      addon_version = "v1.25.0-eksbuild.1" #  => Actual
       service_account_role_arn = module.ebs_csi_driver_irsa.iam_role_arn
+    }
+    coredns = {
+      addon_version = "v1.9.3-eksbuild.9"
+      # addon_version = "coredns:v1.9.3-eksbuild.2"   => Actual
+    }
+    kube-proxy = {
+      # addon_version = "v1.25.15-minimal-eksbuild.2"
+      addon_version = "v1.25.6-minimal-eksbuild.1" #  => Actual
     }
   }
 
