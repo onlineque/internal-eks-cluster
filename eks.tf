@@ -210,6 +210,9 @@ module "eks_blueprints_kubernetes_addons" {
     kube-proxy = {
       most_recent = true
     }
+    aws-efs-csi-driver = {
+      most_recent = true
+    }
   }
 
   # We want to wait for the Fargate profiles to be deployed first
