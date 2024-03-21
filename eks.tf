@@ -295,6 +295,10 @@ module "eks_blueprints_kubernetes_addons" {
         value = "8000"
       },
       {
+        name  = "controller.allowSnippetAnnotations"
+        value = "true"
+      },
+      {
         name  = "controller.config.ssl-redirect"
         value = "false"
       },
