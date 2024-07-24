@@ -27,7 +27,7 @@ module "zones" {
 resource "aws_route53_vpc_association_authorization" "route53_association_authorization" {
   count   = length(module.zones.route53_zone_zone_id)
   vpc_id  = var.transit_vpc_id
-  zone_id = module.zones.route53_zone_zone_id[count.index]
+  zone_id = keys(module.zones.route53_zone_zone_id)[count.index]
 }
  
 resource "aws_route53_resolver_endpoint" "dns_inbound_resolver" {
