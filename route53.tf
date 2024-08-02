@@ -4,27 +4,11 @@ module "zones" {
   zones = {
     "${var.cluster_name}.private" = {
       comment = "${var.cluster_name} DNS zone for external-dns"
-      vpc     = [
-        {
-          vpc_id = var.vpc_id
-        },
-        {
-          vpc_id = var.transit_vpc_id
-        }
-      ],
       tags    = local.tags
     }
     
     "${var.cluster_name}.${var.private_zone_suffix}" = {
       comment = "${var.cluster_name} DNS zone (new naming) for external-dns"
-      vpc     = [
-        {
-          vpc_id = var.vpc_id
-        },
-        {
-          vpc_id = var.transit_vpc_id
-        }
-      ],
       tags    = local.tags
     }
   }
