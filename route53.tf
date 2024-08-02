@@ -1,32 +1,34 @@
-module "zones" {
-  source  = "github.com/terraform-aws-modules/terraform-aws-route53//modules/zones?ref=v2.10.2"
+resource "aws_route53_zone" "not_shared_hosted_zone" {
+  name = "${var.cluster_name}.private"
+  comment = "${var.cluster_name} DNS zone for external-dns"
 
-  zones = {
-    "${var.cluster_name}.private" = {
-      comment = "${var.cluster_name} DNS zone for external-dns"
-      vpc     = [
-        {
-          vpc_id = var.vpc_id
-        }
-      ],
-      tags    = local.tags
-      lifecycle {
-        ignore_changes = [vpc]
-      }
-    }
-    
-    "${var.cluster_name}.${var.private_zone_suffix}" = {
-      comment = "${var.cluster_name} DNS zone (new naming) for external-dns"
-      vpc     = [
-        {
-          vpc_id = var.vpc_id
-        }
-      ],
-      tags    = local.tags
-      lifecycle {
-        ignore_changes = [vpc]
-      }
-    }
+  vpc {
+    vpc_id = var.vpc_id
+  }
+  tags    = local.tags
+
+  # Prevent the deletion of associated VPCs after
+  # the initial creation. See documentation on
+  # aws_route53_zone_association for details
+  lifecycle {
+    ignore_changes = [vpc]
+  }
+}
+
+resource "aws_route53_zone" "shared_hosted_zone" {
+  name = "${var.cluster_name}.${var.private_zone_suffix}"
+  comment = "${var.cluster_name} DNS zone (new naming) for external-dns"
+
+  vpc {
+    vpc_id = var.vpc_id
+  }
+
+  tags    = local.tags
+  # Prevent the deletion of associated VPCs after
+  # the initial creation. See documentation on
+  # aws_route53_zone_association for details
+  lifecycle {
+    ignore_changes = [vpc]
   }
 }
 
