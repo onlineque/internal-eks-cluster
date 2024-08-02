@@ -7,6 +7,9 @@ module "zones" {
       vpc     = [
         {
           vpc_id = var.vpc_id
+        },
+        {
+          vpc_id = var.transit_vpc_id
         }
       ],
       tags    = local.tags
@@ -17,6 +20,9 @@ module "zones" {
       vpc     = [
         {
           vpc_id = var.vpc_id
+        },
+        {
+          vpc_id = var.transit_vpc_id
         }
       ],
       tags    = local.tags
