@@ -415,7 +415,7 @@ module "eks_blueprints_kubernetes_addons" {
 
   # Enable external-dns
   enable_external_dns            = true
-  external_dns_route53_zone_arns = [aws_route53_zone.not_shared_hosted_zone.route53_zone_zone_arn]
+  external_dns_route53_zone_arns = [aws_route53_zone.not_shared_hosted_zone.arn]
 
   external_dns = { # todo check
     # route53_zone_zone_arns = [aws_route53_zone.not_shared_hosted_zone.route53_zone_zone_arn]
