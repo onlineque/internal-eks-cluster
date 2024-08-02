@@ -453,7 +453,7 @@ module "eks_blueprints_kubernetes_addons" {
   }
 
   tags = local.tags
-  depends_on = [module.zones]
+  depends_on = [aws_route53_zone.not_shared_hosted_zone]
 }
 
 # TODO ?
