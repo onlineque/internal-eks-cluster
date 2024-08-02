@@ -32,8 +32,12 @@ resource "aws_route53_zone" "shared_hosted_zone" {
   }
 }
 
-resource "aws_route53_vpc_association_authorization" "route53_association_authorization" {
-  count   = length(module.zones.route53_zone_zone_id)
+resource "aws_route53_vpc_association_authorization" "route53_association_authorization_not_shared" {
   vpc_id  = var.transit_vpc_id
-  zone_id = values(module.zones.route53_zone_zone_id)[count.index]
+  zone_id = aws_route53_zone.not_shared_hosted_zone.id
+}
+
+resource "aws_route53_vpc_association_authorization" "route53_association_authorization_shared" {
+  vpc_id  = var.transit_vpc_id
+  zone_id = aws_route53_zone.shared_hosted_zone.id
 }
