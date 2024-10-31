@@ -389,6 +389,14 @@ module "eks_blueprints_kubernetes_addons" {
       {
         name  = "controller.service.internal.targetPorts.https"
         value = "special"
+      },
+      {
+        name  = "prometheus.create"
+        value = "true"
+      },
+      {
+        name  = "prometheus.service.create"
+        value = "true"
       }
     ]
   }
