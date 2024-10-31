@@ -283,6 +283,10 @@ module "eks_blueprints_kubernetes_addons" {
   ingress_nginx = {
     set = [
       {
+        name  = "controller.replicaCount"
+        value = "2"
+      },
+      {
         name  = "controller.containerPort.http"
         value = "80"
       },
