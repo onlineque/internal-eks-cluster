@@ -397,6 +397,10 @@ module "eks_blueprints_kubernetes_addons" {
       {
         name  = "prometheus.service.create"
         value = "true"
+      },
+      {
+        name  = "prometheus.serviceMonitor.create"
+        value = "true"
       }
     ]
   }
