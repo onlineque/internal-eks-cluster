@@ -222,8 +222,8 @@ module "eks_blueprints_kubernetes_addons" {
   enable_metrics_server = true
 
   # Enable AWS cloudwatch Metrics
-  enable_aws_cloudwatch_metrics = true
-
+  # enable_aws_cloudwatch_metrics = true
+  
   # Enable EFS CSI driver
   enable_aws_efs_csi_driver = true
 
