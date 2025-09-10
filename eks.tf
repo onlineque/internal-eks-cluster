@@ -98,6 +98,12 @@ module "eks" {
         selectors = [
           {
             namespace:  "fargate-*"
+          },
+          {
+            namespace:  "airflow",
+            labels: {
+              fargate: "true"
+            }
           }
         ]
 
