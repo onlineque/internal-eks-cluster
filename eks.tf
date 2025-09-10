@@ -100,7 +100,7 @@ module "eks" {
             namespace:  "fargate-*"
           },
           {
-            namespace:  "airflow",
+            namespace:  "airbyte",
             labels: {
               fargate: "true"
             }
