@@ -51,9 +51,13 @@ serviceAccount:
     eks.amazonaws.com/role-arn: ${sa_role_arn}
 write:
   replicas: 2
-    
+  persistence:
+    storageClass: efs
+
 read:
   replicas: 1
+  persistence:
+    storageClass: efs
 
 test:
   enabled: false
@@ -75,6 +79,8 @@ monitoring:
 
 backend:
   replicas: 2
+  persistence:
+    storageClass: efs
 
 gateway:
   service:
