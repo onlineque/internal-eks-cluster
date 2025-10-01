@@ -66,18 +66,18 @@ module "eks" {
             iam_role_name              = "${var.cluster_name}-${k1}"
             iam_role_use_name_prefix   = false
 
-            use_custom_launch_template = true
-            create_launch_template     = true
-            block_device_mappings = [
-              {
-                 device_name = "/dev/xvda"
-                 ebs = {
-                   volume_size           = v1.disk_size
-                   volume_type           = "gp3"
-                   delete_on_termination = true
-                 }
-              }
-            ]
+            use_custom_launch_template = false
+            #create_launch_template     = true
+            #block_device_mappings = [
+            #  {
+            #     device_name = "/dev/xvda"
+            #     ebs = {
+            #       volume_size           = v1.disk_size
+            #       volume_type           = "gp3"
+            #       delete_on_termination = true
+            #     }
+            #  }
+            #]
 
             instance_types = v1.instance_types
             min_size = v1.min_size
