@@ -231,6 +231,9 @@ module "eks_blueprints_kubernetes_addons" {
     aws-efs-csi-driver = {
       most_recent = true
     }
+    vpc-cni = {
+      most_recent = true
+    }
   }
 
   # We want to wait for the Fargate profiles to be deployed first
