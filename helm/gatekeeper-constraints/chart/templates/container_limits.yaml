@@ -18,6 +18,7 @@ spec:
     - zabbix
     - airbyte
     - fargate-*
+    - goldilocks
   parameters:
     cpu: "{{ .Values.limits.cpu }}"
     memory: "{{ .Values.limits.memory }}"
