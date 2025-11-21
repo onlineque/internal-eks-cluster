@@ -195,9 +195,7 @@ resource "helm_release" "promtail" {
 resource "helm_release" "kubernetes_event_exporter" {
   name       = "kubernetes-event-exporter"
   namespace  = local.monitoring_namespace
-  repository = "https://charts.bitnami.com/bitnami"
-  chart      = "kubernetes-event-exporter"
-  version    = "3.6.3"
+  chart      = "./helm/kubernetes-event-exporter"
   values = [
     templatefile("${path.module}/templates/kubernetes-event-exporter.yaml.tmpl",
       {
