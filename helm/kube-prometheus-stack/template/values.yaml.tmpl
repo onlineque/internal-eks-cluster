@@ -40,13 +40,21 @@ prometheus:
     storageSpec:
       volumeClaimTemplate:
         spec:
-          storageClassName: efs
           accessModes: ["ReadWriteOnce"]
           resources:
             requests:
               storage: 50Gi
         selector: {}
 
+    affinity:
+      nodeAffinity:
+        requiredDuringSchedulingIgnoredDuringExecution:
+          nodeSelectorTerms:
+            - matchExpressions:
+              - key: topology.k8s.aws/zone-id
+                operator: In
+                values:
+                  - euw1-az1
 
 prometheus-node-exporter:
   affinity:
