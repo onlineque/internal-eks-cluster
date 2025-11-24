@@ -66,6 +66,13 @@ module "eks" {
             iam_role_name              = "${var.cluster_name}-${k1}"
             iam_role_use_name_prefix   = false
 
+            kubelet_extra_args = join(" ", [
+              "--kube-reserved=cpu=300m,memory=300Mi,ephemeral-storage=1Gi",
+              "--system-reserved=cpu=300m,memory=300Mi,ephemeral-storage=1Gi",
+              "--kube-reserved-cgroup=/kube-reserved",
+              "--eviction-hard=memory.available<200Mi,nodefs.available<10%",
+            ])
+
             use_custom_launch_template = false
             #create_launch_template     = true
             #block_device_mappings = [
