@@ -29,7 +29,7 @@ locals {
 module "eks" {
   # source = "github.com/aws-ia/terraform-aws-eks-blueprints?ref=v4.32.1"
   source  = "terraform-aws-modules/eks/aws"
-  version = "~> 21.9"
+  version = "~> 19.13"
 
   cluster_name                   = var.cluster_name
   cluster_version                = var.cluster_version
