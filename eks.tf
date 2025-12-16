@@ -92,6 +92,7 @@ module "eks" {
             desired_size = v1.desired_size
             disk_size = v1.disk_size
             tags = v1.labels
+            taints = v1.taints
 
             iam_role_additional_policies = {
               AmazonSSMManagedInstanceCore = "arn:aws:iam::aws:policy/AmazonSSMManagedInstanceCore"
