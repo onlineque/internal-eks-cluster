@@ -37,6 +37,14 @@ prometheus:
 
     probeSelectorNilUsesHelmValues: false
 
+    resources:
+      limits:
+        cpu: 1200m
+        memory: 6Gi
+      requests:
+        cpu: 600m
+        memory: 6Gi
+
     storageSpec:
       volumeClaimTemplate:
         spec:
