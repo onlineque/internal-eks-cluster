@@ -67,6 +67,7 @@ variable "managed_node_groups" {
     max_size     = number
     desired_size = number
     disk_size    = number
+    taints       = any
 
     labels = map(string)
   }))
