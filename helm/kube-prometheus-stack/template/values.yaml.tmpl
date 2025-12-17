@@ -63,6 +63,13 @@ prometheus:
                 operator: In
                 values:
                   - euw1-az3
+    tolerations:
+      - key: "platform"
+        operator: "Exists"
+        effect: "NoSchedule"
+
+    nodeSelector:
+      platform: "true"
 
 prometheus-node-exporter:
   affinity:
