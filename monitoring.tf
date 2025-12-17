@@ -195,7 +195,8 @@ resource "helm_release" "promtail" {
 resource "helm_release" "kubernetes_event_exporter" {
   name       = "kubernetes-event-exporter"
   namespace  = local.monitoring_namespace
-  chart      = "${path.module}/helm/kubernetes-event-exporter"
+  repository = "https://itakurah.github.io/kubernetes-event-exporter"
+  chart      = "kubernetes-event-exporter"
   values = [
     templatefile("${path.module}/templates/kubernetes-event-exporter.yaml.tmpl",
       {
