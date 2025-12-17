@@ -87,12 +87,13 @@ module "eks" {
             #]
 
             instance_types = v1.instance_types
-            min_size = v1.min_size
-            max_size = v1.max_size
-            desired_size = v1.desired_size
-            disk_size = v1.disk_size
-            tags = v1.labels
-            taints = v1.taints
+            min_size       = v1.min_size
+            max_size       = v1.max_size
+            desired_size   = v1.desired_size
+            disk_size      = v1.disk_size
+            tags           = v1.labels
+            taints         = v1.taints
+            labels         = v1.labels
 
             iam_role_additional_policies = {
               AmazonSSMManagedInstanceCore = "arn:aws:iam::aws:policy/AmazonSSMManagedInstanceCore"
