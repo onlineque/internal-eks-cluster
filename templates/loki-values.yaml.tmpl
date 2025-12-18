@@ -51,9 +51,21 @@ serviceAccount:
     eks.amazonaws.com/role-arn: ${sa_role_arn}
 write:
   replicas: 2
-    
+  nodeSelector:
+    platform: "true"
+  tolerations:
+    - key: "platform"
+      operator: "Exists"
+      effect: "NoSchedule"
+
 read:
   replicas: 1
+  nodeSelector:
+    platform: "true"
+  tolerations:
+    - key: "platform"
+      operator: "Exists"
+      effect: "NoSchedule"
 
 test:
   enabled: false
@@ -75,10 +87,22 @@ monitoring:
 
 backend:
   replicas: 2
+  nodeSelector:
+    platform: "true"
+  tolerations:
+    - key: "platform"
+      operator: "Exists"
+      effect: "NoSchedule"
 
 gateway:
   service:
     type: NodePort
+  nodeSelector:
+    platform: "true"
+  tolerations:
+    - key: "platform"
+      operator: "Exists"
+      effect: "NoSchedule"
   ingress:
     # -- Specifies whether an ingress for the gateway should be created
     enabled: true
