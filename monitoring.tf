@@ -197,6 +197,7 @@ resource "helm_release" "kubernetes_event_exporter" {
   namespace  = local.monitoring_namespace
   repository = "https://itakurah.github.io/kubernetes-event-exporter"
   chart      = "kubernetes-event-exporter"
+  version    = "0.2.1"
   values = [
     templatefile("${path.module}/templates/kubernetes-event-exporter.yaml.tmpl",
       {
