@@ -14,3 +14,11 @@ config:
       streamLabels:
         source: kube-api
       url: ${loki_gateway_monitoring_url}/loki/api/v1/push
+
+nodeSelector:
+  platform: "true"
+
+tolerations:
+  - key: "platform"
+    operator: "Exists"
+    effect: "NoSchedule"
