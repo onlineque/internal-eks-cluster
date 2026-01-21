@@ -4,7 +4,7 @@ metadata:
   name: autoassign-labels-goldilocks
 spec:
   match:
-    scope: Namespaced
+    scope: Cluster
     kinds:
     - apiGroups: ["*"]
       kinds: ["Namespace"]
