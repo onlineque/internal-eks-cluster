@@ -8,7 +8,7 @@ spec:
     kinds:
     - apiGroups: ["*"]
       kinds: ["Namespace"]
-  location: "metadata.labels.['goldilocks.fairwinds.com/enabled']"
+  location: 'metadata.labels."goldilocks.fairwinds.com/enabled"'
   parameters:
     assign:
       value:  "true"
