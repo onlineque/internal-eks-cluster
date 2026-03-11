@@ -1,4 +1,8 @@
 loki:
+  image:
+    registry: 547823348125.dkr.ecr.eu-west-1.amazonaws.com
+    repository: docker.io/grafana/loki
+    tag: 2.8.2
   auth_enabled: false
   commonConfig:
     path_prefix: /var/loki
@@ -67,6 +71,12 @@ read:
       operator: "Exists"
       effect: "NoSchedule"
 
+lokiCanary:
+  image:
+    registry: 547823348125.dkr.ecr.eu-west-1.amazonaws.com
+    repository: docker.io/grafana/loki-canary
+    tag: 2.8.2
+
 test:
   enabled: false
 monitoring:
@@ -86,6 +96,10 @@ monitoring:
       installOperator: false
 
 backend:
+  image:
+    registry: 547823348125.dkr.ecr.eu-west-1.amazonaws.com
+    repository: docker.io/grafana/loki
+    tag: 2.8.2
   replicas: 2
   nodeSelector:
     platform: "true"
@@ -95,6 +109,10 @@ backend:
       effect: "NoSchedule"
 
 gateway:
+  image:
+    registry: 547823348125.dkr.ecr.eu-west-1.amazonaws.com
+    repository: docker.io/nginxinc/nginx-unprivileged
+    tag: 1.19.4-alpine
   service:
     type: NodePort
   nodeSelector:
