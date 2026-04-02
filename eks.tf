@@ -91,7 +91,7 @@ module "eks" {
             max_size       = v1.max_size
             desired_size   = v1.desired_size
             disk_size      = v1.disk_size
-            tags           = v1.labels
+            tags           = v1.tags
             taints         = v1.taints
             labels         = v1.labels
 

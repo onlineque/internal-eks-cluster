@@ -70,6 +70,7 @@ variable "managed_node_groups" {
     taints       = any
 
     labels = map(string)
+    tags   = map(string)
   }))
   default     = {}
 }
