@@ -6,7 +6,7 @@ data "template_file" "gatekeeper-templates" {
 resource "helm_release" "gatekeeper-templates" {
   name      = "gatekeeper-templates"
   chart     = "${path.module}/helm/gatekeeper-templates/chart/"
-  version   = "1.0.2"
+  version   = "0.1.2"
   namespace = "gatekeeper-system"
   values    = [data.template_file.gatekeeper-templates.rendered]
 
