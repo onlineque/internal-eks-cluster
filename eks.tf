@@ -220,7 +220,9 @@ module "ebs_csi_driver_irsa" {
 module "eks_blueprints_kubernetes_addons" {
   # source = "github.com/aws-ia/terraform-aws-eks-blueprints//modules/kubernetes-addons?ref=v4.32.1"
   source = "aws-ia/eks-blueprints-addons/aws"
-  version = "~> 1.0"
+
+  #version = "~> 1.0"
+  version = "1.24.0"
 
   cluster_name      = module.eks.cluster_name
   cluster_endpoint  = module.eks.cluster_endpoint
