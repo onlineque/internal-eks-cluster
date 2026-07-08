@@ -168,7 +168,8 @@ module "admin_team" {
 
 module "eks_blueprints_addon" {
   source = "aws-ia/eks-blueprints-addon/aws"
-  version = "~> 1.0" #ensure to update this to the latest/desired version
+  # version = "~> 1.0" #ensure to update this to the latest/desired version
+  version = "1.2.0"
 
   # Disable helm release
   create_release = false
