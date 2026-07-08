@@ -470,6 +470,13 @@ module "eks_blueprints_kubernetes_addons" {
   enable_velero           = true
   velero = {
     s3_backup_location = module.s3_bucket_velero.s3_bucket_arn
+
+    set = [
+      {
+        name  = "deployNodeAgent"
+        value = "true"
+      }
+    ]
   }
 
   # Enable external-dns
