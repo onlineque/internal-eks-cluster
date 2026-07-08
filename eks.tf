@@ -471,11 +471,10 @@ module "eks_blueprints_kubernetes_addons" {
   velero = {
     s3_backup_location = module.s3_bucket_velero.s3_bucket_arn
 
-    set = [
-      {
-        name  = "deployNodeAgent"
-        value = "true"
-      }
+    values = [
+      <<-EOT
+        deployNodeAgent: true
+      EOT
     ]
   }
 
