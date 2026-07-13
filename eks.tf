@@ -168,8 +168,11 @@ module "admin_team" {
 
 module "eks_blueprints_addon" {
   source = "aws-ia/eks-blueprints-addon/aws"
-  # version = "~> 1.0" #ensure to update this to the latest/desired version
-  version = "1.2.0"
+
+  # version 1.2.0 is the latest version with Helm provider v2
+  #version = "1.2.0"
+
+  version = "1.3.0"
 
   # Disable helm release
   create_release = false
@@ -218,11 +221,12 @@ module "ebs_csi_driver_irsa" {
 ################################################################################
 
 module "eks_blueprints_kubernetes_addons" {
-  # source = "github.com/aws-ia/terraform-aws-eks-blueprints//modules/kubernetes-addons?ref=v4.32.1"
   source = "aws-ia/eks-blueprints-addons/aws"
 
-  #version = "~> 1.0"
-  version = "1.23.0"
+  # 1.23.0 is the latest version with helm provider v2
+  #version = "1.23.0"
+
+  version = "1.24.3"
 
   cluster_name      = module.eks.cluster_name
   cluster_endpoint  = module.eks.cluster_endpoint
