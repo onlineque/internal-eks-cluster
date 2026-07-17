@@ -81,3 +81,7 @@ prometheus-node-exporter:
               operator: NotIn
               values:
                 - fargate
+
+kube-state-metrics:
+  metricDenylist
+    - kube_job_.*
