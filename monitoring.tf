@@ -5,18 +5,13 @@ locals {
   loki_gateway_monitoring_url = "http://loki-gateway.${local.monitoring_namespace}.svc.cluster.local"
 }
 
-resource "kubernetes_namespace" "monitoring" {
-  metadata {
-    name = local.monitoring_namespace
-  }
-}
-
 resource "helm_release" "kube-prometheus-stack" {
-  name       = "kube-prometheus-stack"
-  repository = "https://prometheus-community.github.io/helm-charts"
-  chart      = "kube-prometheus-stack"
-  version    = "48.1.0"
-  namespace  = local.monitoring_namespace
+  name             = "kube-prometheus-stack"
+  repository       = "https://prometheus-community.github.io/helm-charts"
+  chart            = "kube-prometheus-stack"
+  version          = "48.1.0"
+  namespace        = local.monitoring_namespace
+  create_namespace = true
   values = [
     templatefile("${path.module}/helm/kube-prometheus-stack/template/values.yaml.tmpl",
       {
@@ -25,7 +20,7 @@ resource "helm_release" "kube-prometheus-stack" {
     })
   ]
 
-  depends_on = [time_sleep.wait_for_eks_addons,kubernetes_namespace.monitoring]
+  depends_on = [time_sleep.wait_for_eks_addons]
 }
 
 # loki
@@ -157,11 +152,12 @@ module "loki_s3_irsa" {
 }
 
 resource "helm_release" "loki" {
-  name       = "loki"
-  namespace  = local.monitoring_namespace
-  repository = "https://grafana.github.io/helm-charts"
-  chart      = "loki"
-  version    = "5.5.11"
+  name             = "loki"
+  namespace        = local.monitoring_namespace
+  create_namespace = true
+  repository       = "https://grafana.github.io/helm-charts"
+  chart            = "loki"
+  version          = "5.5.11"
   values = [
     templatefile("${path.module}/templates/loki-values.yaml.tmpl",
       {
@@ -172,38 +168,38 @@ resource "helm_release" "loki" {
         loki_gateway_internal_fqdn = var.loki_gateway_internal_fqdn
     })
   ]
-  #won't create resource unless namespace 'monitoring' is created and addons up
-  depends_on = [kubernetes_namespace.monitoring,time_sleep.wait_for_eks_addons]
+  #won't create resource unless addons up
+  depends_on = [time_sleep.wait_for_eks_addons]
 }
 
 resource "helm_release" "promtail" {
-  name       = "promtail"
-  namespace  = local.monitoring_namespace
-  repository = "https://grafana.github.io/helm-charts"
-  chart      = "promtail"
-  version    = "6.11.3"
+  name             = "promtail"
+  namespace        = local.monitoring_namespace
+  create_namespace = true
+  repository       = "https://grafana.github.io/helm-charts"
+  chart            = "promtail"
+  version          = "6.11.3"
   values = [
     templatefile("${path.module}/templates/promtail-values.yaml.tmpl",
       {
         loki_gateway_monitoring_url = local.loki_gateway_monitoring_url
     })
   ]
-  #won't create resource unless namespace 'monitoring' is created
-  depends_on = [kubernetes_namespace.monitoring,time_sleep.wait_for_eks_addons]
+  depends_on = [time_sleep.wait_for_eks_addons]
 }
 
 resource "helm_release" "kubernetes_event_exporter" {
-  name       = "kubernetes-event-exporter"
-  namespace  = local.monitoring_namespace
-  repository = "https://itakurah.github.io/kubernetes-event-exporter"
-  chart      = "kubernetes-event-exporter"
-  version    = "0.2.1"
-  values = [
+  name             = "kubernetes-event-exporter"
+  namespace        = local.monitoring_namespace
+  create_namespace = true
+  repository       = "https://itakurah.github.io/kubernetes-event-exporter"
+  chart            = "kubernetes-event-exporter"
+  version          = "0.2.1"
+  values        = [
     templatefile("${path.module}/templates/kubernetes-event-exporter.yaml.tmpl",
       {
         loki_gateway_monitoring_url = local.loki_gateway_monitoring_url
     })
   ]
-  #won't create resource unless namespace 'monitoring' is created
-  depends_on = [kubernetes_namespace.monitoring,time_sleep.wait_for_eks_addons]
+  depends_on = [time_sleep.wait_for_eks_addons]
 }
