@@ -149,6 +149,9 @@ module "loki_s3_irsa" {
   }
 
   tags = var.tags
+  depends_on = [
+    module.eks
+  ]
 }
 
 resource "helm_release" "loki" {
