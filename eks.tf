@@ -282,7 +282,7 @@ module "eks_blueprints_kubernetes_addons" {
   # enable_aws_cloudwatch_metrics = true
   
   # Enable EFS CSI driver
-  enable_aws_efs_csi_driver = true
+  # enable_aws_efs_csi_driver = true
 
   # Todo
   # Enable EBS CSI driver
